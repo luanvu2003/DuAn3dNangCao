@@ -25,28 +25,23 @@ public class WalkState : StateMachineBehaviour
         }
 
         // Load waypoint nếu chưa có
-        if (waypoints.Count == 0)
+        waypoints.Clear();
+
+        GameObject[] waypointObjects = GameObject.FindGameObjectsWithTag("WayPoint");
+
+        if (waypointObjects.Length == 0)
         {
-            // LƯU Ý: Tag phải đúng với cái bạn gắn trong Editor
-            GameObject holder = GameObject.FindGameObjectWithTag("WayPoint"); // hoặc "WayPoints" nếu bạn dùng tag đó
-            if (holder == null)
-            {
-                Debug.LogError("Không tìm thấy object có tag 'Waypoint'! Kiểm tra Tag (không phải Name).");
-                return;
-            }
-
-            foreach (Transform t in holder.transform)
-            {
-                if (t != holder.transform) // bỏ qua chính holder
-                    waypoints.Add(t);
-            }
-
-            // if (waypoints.Count == 0)
-            // {
-            //     Debug.LogError("Danh sách waypoint rỗng! Hãy thêm các Transform con vào object 'Waypoint'.");
-            //     return;
-            // }
+            Debug.LogError("Không tìm thấy waypoint nào có tag 'WayPoint'!");
+            return;
         }
+
+        foreach (GameObject wp in waypointObjects)
+        {
+            waypoints.Add(wp.transform);
+        }
+
+        Debug.Log("Waypoint loaded: " + waypoints.Count);
+
 
         // Set đường đi random an toàn
         SetRandomDestination();
