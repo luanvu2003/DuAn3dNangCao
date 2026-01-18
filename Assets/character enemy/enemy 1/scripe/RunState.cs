@@ -10,7 +10,8 @@ public class RunState : StateMachineBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
 
-        agent = animator.gameObject.transform.parent.GetComponent<NavMeshAgent>();
+        agent = animator.GetComponent<NavMeshAgent>();
+
         agent.speed = 2f;
 
     }
