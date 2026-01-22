@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 99fddaa2ba3cd4c45881736bfcc7e0e8
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 260042
+  packageName: Idyllic Fantasy Nature
+  packageVersion: 1.0
+  assetPath: Assets/Idyllic Fantasy Nature/Demo/Settings/UniversalRenderPipelineAsset.asset
+  uploadId: 617545
