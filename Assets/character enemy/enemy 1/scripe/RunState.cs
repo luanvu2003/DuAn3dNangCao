@@ -3,54 +3,61 @@ using UnityEngine.AI;
 
 public class RunState : StateMachineBehaviour
 {
-            NavMeshAgent agent;
-        Transform player;
-    // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
+    private NavMeshAgent agent;
+    private Transform player;
+
+    public float attackRange = 1.3f;
+    public float stopChaseDistance = 15f;
+    public float runSpeed = 4f;
+
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        player = GameObject.FindGameObjectWithTag("Player").transform;
+        GameObject p = GameObject.FindGameObjectWithTag("Player");
+        if (p != null)
+            player = p.transform;
 
-        agent = animator.GetComponent<NavMeshAgent>();
+        agent = animator.GetComponentInParent<NavMeshAgent>();
+        if (agent == null) return;
 
-        agent.speed = 2f;
-
+        agent.isStopped = false;
+        agent.speed = runSpeed;              // 🔥 chạy nhanh hơn walk
+        agent.stoppingDistance = attackRange - 0.1f;
     }
 
-    // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (agent != null && player != null)
+        if (agent == null || player == null) return;
+
+        float distance = Vector3.Distance(
+            animator.transform.position,
+            player.position
+        );
+
+        // 🔥 DÍ THEO PLAYER MỖI FRAME
+        agent.SetDestination(player.position);
+
+        // Vào attack
+        if (distance <= attackRange)
         {
-            agent.SetDestination(player.position);
+            agent.isStopped = true;           // 🔥 BẮT BUỘC
+            animator.SetBool("isAttacking", true);
+            animator.SetBool("isRunning", false);
+            return;
         }
-        float distance=Vector3.Distance(player.position,animator.transform.position);
-        if (distance > 15)
-            animator.SetBool("isRunning",false);
-        if (distance <1.3)
-            animator.SetBool("isAttacking",true);
+
+        // Mất dấu → quay lại patrol
+        if (distance > stopChaseDistance)
+        {
+            animator.SetBool("isRunning", false);
+            animator.SetBool("isPatrolling", true);
+        }
     }
 
-    // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         if (agent != null)
         {
-            agent.SetDestination(animator.transform.position);
+            agent.isStopped = false;   // 🔥 mở lại cho state sau
         }
-
     }
-
-
-    // OnStateMove is called right after Animator.OnAnimatorMove()
-    //override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    // Implement code that processes and affects root motion
-    //}
-
-    // OnStateIK is called right after Animator.OnAnimatorIK()
-    //override public void OnStateIK(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    // Implement code that sets up animation IK (inverse kinematics)
-    //}
 }
-

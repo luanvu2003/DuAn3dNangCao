@@ -3,46 +3,36 @@ using UnityEngine;
 public class AttackState : StateMachineBehaviour
 {
     Transform player;
-    bool hasRotated;
-
+    // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        player = GameObject.FindGameObjectWithTag("Player").transform;
-        hasRotated = false;
+       player = GameObject.FindGameObjectWithTag("Player").transform; 
     }
 
+    // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        // 1️⃣ Chỉ xoay 1 lần khi mới bắt đầu attack
-        if (!hasRotated)
-        {
-            Vector3 direction = player.position - animator.transform.position;
-            direction.y = 0f;
-
-            if (direction != Vector3.zero)
-            {
-                animator.transform.rotation = Quaternion.LookRotation(direction);
-            }
-
-            hasRotated = true;
-        }
-
-        // 2️⃣ Khi animation đánh gần xong
-        if (stateInfo.normalizedTime >= 0.95f)
-        {
-            float distance = Vector3.Distance(player.position, animator.transform.position);
-
-            if (distance <= 2.5f)
-            {
-                // Đánh tiếp → reset animation
-                animator.Play(stateInfo.fullPathHash, 0, 0f);
-                hasRotated = false; // cho phép xoay lại lần sau
-            }
-            else
-            {
-                // Player ra xa → ngừng attack
-                animator.SetBool("isAttacking", false);
-            }
-        }
+        animator.transform.LookAt(player);
+        float distance = Vector3.Distance(player.position,animator.transform.position);
+        if(distance>2.5)
+        animator.SetBool("isAttacking",false);
     }
+
+    // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
+    override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        
+    }
+    
+    // OnStateMove is called right after Animator.OnAnimatorMove()
+    //override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    //{
+    //    // Implement code that processes and affects root motion
+    //}
+
+    // OnStateIK is called right after Animator.OnAnimatorIK()
+    //override public void OnStateIK(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    //{
+    //    // Implement code that sets up animation IK (inverse kinematics)
+    //}
 }
