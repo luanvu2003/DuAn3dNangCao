@@ -133,7 +133,7 @@ AnimatorStateMachine:
     m_Position: {x: 620, y: 120, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 7455679466966976513}
-    m_Position: {x: 290, y: -130, z: 0}
+    m_Position: {x: 410, y: -130, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 7384107222989944652}
     m_Position: {x: 30, y: -90, z: 0}
@@ -291,6 +291,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb1ebb3d2bbc86f41b34ae2ca1a3d51d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attackRange: 1.3
+  stopChaseDistance: 15
+  runSpeed: 4
 --- !u!114 &2567597572140585042
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -456,7 +459,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 6cb7f613edc0a6b4bb79a9e1c6ca8dbe, type: 2}
+  m_Motion: {fileID: 7400000, guid: 7d86b14abfe37b449ae400e21b32b41b, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
