@@ -65,7 +65,7 @@ public class MagicSkills : MonoBehaviour
 
         // 2. SINH SKILL NGAY LẬP TỨC (Vì chưa có Anim Event)
         // Sau này có Anim, bạn cắt đoạn này ra hàm riêng để Anim Event gọi
-        SpawnSkillE();
+        // SpawnSkillE();
 
         // 3. Tính hồi chiêu
         nextSkillETime = Time.time + cooldownE;
