@@ -1137,6 +1137,7 @@ MonoBehaviour:
   waypointHolder: {fileID: 0}
   player: {fileID: 0}
   chaseRange: 8
+  attackRange: 1.5
 --- !u!1 &2990783575400286281
 GameObject:
   m_ObjectHideFlags: 0
@@ -2375,7 +2376,7 @@ Transform:
   m_GameObject: {fileID: 8883487196772326016}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 11.48, y: 0, z: 2.82}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
