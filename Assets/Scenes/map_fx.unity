@@ -564,6 +564,69 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4585236196532635422, guid: 03b81729e55db4f47af7d7cf06e40de9, type: 3}
   m_PrefabInstance: {fileID: 1048882131066449160}
   m_PrefabAsset: {fileID: 0}
+--- !u!54 &1352861999 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 7075333216783539435, guid: 03b81729e55db4f47af7d7cf06e40de9, type: 3}
+  m_PrefabInstance: {fileID: 1048882131066449160}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &1352862002 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5894846112449868254, guid: 03b81729e55db4f47af7d7cf06e40de9, type: 3}
+  m_PrefabInstance: {fileID: 1048882131066449160}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1352862004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1352861997}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98aa2a3073ab41a48afd876cb6bebf78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHP: 1000
+  currentHP: 0
+  maxRage: 100
+  currentRage: 0
+  skillEPrefab: {fileID: 0}
+  castPoint: {fileID: 0}
+  cooldownE: 3
+  cooldownQ: 5
+  rageCostQ: 100
+  anim: {fileID: 1352862002}
+--- !u!114 &1352862005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1352861997}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c0c487c7d66b3341a51c56705354a91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackCooldown: 0.5
+  anim: {fileID: 1352862002}
+--- !u!114 &1352862006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1352861997}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac79bb8d4ab797a4ebecf7ea5d8cb595, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walkSpeedLimit: 2
+  runThreshold: 0.1
+  walkAnimSpeed: 0.5
+  rb: {fileID: 1352861999}
+  anim: {fileID: 1352862002}
 --- !u!1 &1432430625
 GameObject:
   m_ObjectHideFlags: 0
@@ -1122,7 +1185,16 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4585236196532635422, guid: 03b81729e55db4f47af7d7cf06e40de9, type: 3}
+      insertIndex: 2
+      addedObject: {fileID: 1352862006}
+    - targetCorrespondingSourceObject: {fileID: 4585236196532635422, guid: 03b81729e55db4f47af7d7cf06e40de9, type: 3}
+      insertIndex: 3
+      addedObject: {fileID: 1352862005}
+    - targetCorrespondingSourceObject: {fileID: 4585236196532635422, guid: 03b81729e55db4f47af7d7cf06e40de9, type: 3}
+      insertIndex: 4
+      addedObject: {fileID: 1352862004}
   m_SourcePrefab: {fileID: 100100000, guid: 03b81729e55db4f47af7d7cf06e40de9, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
