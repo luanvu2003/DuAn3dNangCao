@@ -3,24 +3,29 @@ using UnityEngine;
 public class MagicSkillHitbox : MonoBehaviour
 {
     public string enemyTag = "Enemy";
+    public float rageAmount = 10f; // Nộ nhận được mỗi hit
+
+    private CharacterBaseStats myOwner; // Chủ nhân của hitbox này
+
+    void Start()
+    {
+        // Tự tìm script chỉ số trên người nhân vật (tìm ở cha)
+        myOwner = GetComponentInParent<CharacterBaseStats>();
+    }
 
     private void OnTriggerEnter(Collider other)
     {
-        // 1. In ra tên của BẤT CỨ CÁI GÌ va phải (kể cả đất, tường)
-        Debug.Log("Hitbox đã chạm vào: " + other.name + " | Tag: " + other.tag);
-
-        // 2. Kiểm tra Tag
         if (other.CompareTag(enemyTag))
         {
-            Debug.Log("--> Đã xác nhận là Kẻ Địch!");
-            
-            if (MagicSkills.instance != null)
+            // Cách 1: Nếu hitbox gắn trên người -> Gọi thẳng script cha
+            if (myOwner != null)
             {
-                MagicSkills.instance.AddRage();
+                myOwner.AddRage(rageAmount);
             }
-            else
+            // Cách 2: Nếu là đạn bắn ra xa (không tìm được cha) -> Dùng Instance (chấp nhận rủi ro nhỏ khi swap nhanh)
+            else if (MagicSkills.instance != null)
             {
-                Debug.LogError("LỖI: Không tìm thấy MagicSkills.instance! (Kiểm tra xem nhân vật có script chưa)");
+                MagicSkills.instance.AddRage(rageAmount);
             }
         }
     }

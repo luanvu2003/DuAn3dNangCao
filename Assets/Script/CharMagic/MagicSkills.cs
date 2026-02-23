@@ -1,109 +1,104 @@
 using UnityEngine;
 
-public class MagicSkills : MonoBehaviour
+// KẾ THỪA TỪ CharacterBaseStats ĐỂ CÓ MÁU VÀ NỘ
+public class MagicSkills : CharacterBaseStats 
 {
-    // Tạo Singleton để viên đạn dễ dàng tìm thấy nhân vật
     public static MagicSkills instance;
 
-    [Header("Rage Settings (Hệ thống Nộ)")]
-    public float maxRage = 100f;
-    public float currentRage = 0f;
-    public float ragePerHit = 10f; // Mỗi lần trúng quái tăng 10
-
     [Header("Skill E Settings")]
-    public GameObject skillEPrefab; // Kéo Prefab Skill E vào đây
-    public Transform castPoint;     // Vị trí bắn (dưới chân)
+    public GameObject skillEPrefab; 
+    public Transform castPoint;     
     public float cooldownE = 3f;
-    private float nextSkillETime = 0f;
 
     [Header("Skill Q Settings (Ultimate)")]
-    public float cooldownQ = 5f; // Hồi chiêu của Q (nếu cần)
-    private float nextSkillQTime = 0f;
+    public float cooldownQ = 5f; 
+    public float rageCostQ = 100f; // Tốn bao nhiêu nộ để dùng Q?
 
     [Header("Components")]
     public Animator anim;
 
-    void Awake()
+    // Khi nhân vật được BẬT lên (Swap tới), nó sẽ tự gán instance
+    void OnEnable()
     {
-        instance = this; // Đăng ký bản thân để script Hitbox gọi được
+        instance = this;
     }
 
-    void Start()
+    protected override void Start() // Dùng override vì lớp cha cũng có Start
     {
-        if (anim == null) anim = GetComponent<Animator>();
+        base.Start(); // Gọi hàm Start của cha để set máu
         
-        // Nếu chưa có CastPoint, dùng tạm vị trí nhân vật
+        if (anim == null) anim = GetComponent<Animator>();
         if (castPoint == null) castPoint = transform;
     }
 
     void Update()
     {
         // --- XỬ LÝ SKILL E ---
-        if (Input.GetKeyDown(KeyCode.E) && Time.time >= nextSkillETime)
+        // Kiểm tra phím bấm VÀ hỏi hệ thống Cooldown xem Skill E xong chưa
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            UseSkillE();
-        }
-
-        // --- XỬ LÝ SKILL Q ---
-        if (Input.GetKeyDown(KeyCode.Q) && Time.time >= nextSkillQTime)
-        {
-            if (currentRage >= maxRage)
+            if (IsSkillReady("Skill_E")) // "Skill_E" là tên định danh
             {
-                UseSkillQ();
+                UseSkillE();
             }
             else
             {
-                Debug.Log("Chưa đủ nộ: " + currentRage + "/" + maxRage);
+                Debug.Log("Skill E đang hồi! Còn: " + GetRemainingCooldown("Skill_E"));
+            }
+        }
+
+        // --- XỬ LÝ SKILL Q ---
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            // Kiểm tra Cooldown Q VÀ Kiểm tra đủ Nộ không (currentRage có sẵn từ lớp cha)
+            if (IsSkillReady("Skill_Q"))
+            {
+                if (currentRage >= rageCostQ)
+                {
+                    UseSkillQ();
+                }
+                else
+                {
+                    Debug.Log("Chưa đủ nộ: " + currentRage + "/" + rageCostQ);
+                }
             }
         }
     }
 
     void UseSkillE()
     {
-        // 1. Chạy Animation (nếu chưa có thì dòng này ko lỗi, chỉ warning nhẹ)
         if (anim != null) anim.SetTrigger("SkillE");
+        
+        // Spawn skill logic (giữ nguyên của bạn)
+        SpawnSkillE();
 
-        // 2. SINH SKILL NGAY LẬP TỨC (Vì chưa có Anim Event)
-        // Sau này có Anim, bạn cắt đoạn này ra hàm riêng để Anim Event gọi
-        // SpawnSkillE();
-
-        // 3. Tính hồi chiêu
-        nextSkillETime = Time.time + cooldownE;
+        // KÍCH HOẠT HỒI CHIÊU CHO BASE SYSTEM
+        // Dù tắt nhân vật đi, cái này vẫn đếm đúng theo thời gian thực
+        StartCooldown("Skill_E", cooldownE);
     }
 
     void UseSkillQ()
     {
-        // 1. Chạy Animation Q
         if (anim != null) anim.SetTrigger("SkillQ");
 
-        // 2. Reset Nộ về 0
-        currentRage = 0;
+        // Trừ nộ (Biến currentRage từ lớp cha)
+        currentRage -= rageCostQ;
         
-        // 3. Tính hồi chiêu (nếu muốn Q cũng phải đợi)
-        nextSkillQTime = Time.time + cooldownQ;
+        // Tính hồi chiêu cho Q
+        StartCooldown("Skill_Q", cooldownQ);
 
         Debug.Log("ULTIMATE KÍCH HOẠT!");
     }
 
-    // Hàm này sinh ra Prefab (đạn/vòng xoáy)
     public void SpawnSkillE()
     {
         if (skillEPrefab != null)
         {
-            // Sinh ra skill tại vị trí castPoint, giữ nguyên góc xoay của Prefab gốc
             Instantiate(skillEPrefab, castPoint.position, skillEPrefab.transform.rotation);
         }
     }
-
-    // Hàm này để script Hitbox gọi khi trúng quái
-    public void AddRage()
-    {
-        if (currentRage < maxRage)
-        {
-            currentRage += ragePerHit;
-            // Kẹp nộ không cho quá 100
-            currentRage = Mathf.Clamp(currentRage, 0, maxRage);
-            Debug.Log("Đã tăng nộ! Hiện tại: " + currentRage);
-        }
-    }
+    
+    // Hàm AddRage đã có ở lớp cha (CharacterBaseStats), 
+    // nhưng nếu bạn muốn logic riêng (ví dụ kẹp nộ), có thể Override lại.
+    // Ở đây mình dùng luôn hàm của cha cho gọn.
 }
