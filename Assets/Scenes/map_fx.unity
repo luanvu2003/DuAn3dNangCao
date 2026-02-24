@@ -2431,8 +2431,8 @@ MonoBehaviour:
   currentHP: 0
   maxRage: 100
   currentRage: 0
-  skillEPrefab: {fileID: 0}
-  castPoint: {fileID: 0}
+  arrowPrefab: {fileID: 0}
+  firePoint: {fileID: 0}
   cooldownE: 3
   cooldownQ: 5
   rageCostQ: 100
@@ -2450,6 +2450,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackCooldown: 0.5
+  arrowPrefab: {fileID: 0}
+  firePoint: {fileID: 0}
   anim: {fileID: 1352862002}
 --- !u!114 &1352862006
 MonoBehaviour:
