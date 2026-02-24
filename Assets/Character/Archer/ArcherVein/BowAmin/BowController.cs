@@ -8,7 +8,7 @@ public class BowController : MonoBehaviour
     public GameObject arrowPrefab;         // Prefab mũi tên
     public Transform shootPoint;           // Vị trí đầu cung để bắn mũi tên
     public float arrowForce = 20f;         // Lực bắn mũi tên
-
+    public float arrowDelay = 1f;
     private bool isPlaying = false;
     private float animationLength = 0f;
 
@@ -29,7 +29,7 @@ public class BowController : MonoBehaviour
             isPlaying = true;
 
             // Bắn mũi tên
-            ShootArrow();
+            Invoke(nameof(ShootArrow), arrowDelay);
 
             Invoke(nameof(HideBow), animationLength);
         }
@@ -40,7 +40,7 @@ public class BowController : MonoBehaviour
         if (arrowPrefab != null && shootPoint != null)
         {
             GameObject arrow = Instantiate(arrowPrefab, shootPoint.position, shootPoint.rotation);
-            arrow.transform.Rotate(0, 90, 0); // ví dụ xoay để mũi tên nằm theo Z
+            arrow.transform.Rotate(0, 0, 0); // ví dụ xoay để mũi tên nằm theo Z
             Rigidbody rb = arrow.GetComponent<Rigidbody>();
             if (rb != null)
             {
