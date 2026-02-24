@@ -1769,6 +1769,72 @@ Transform:
   - {fileID: 1857527491832551673}
   m_Father: {fileID: 3540685127833106779}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5929934630632852444
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4335023603117966269}
+  - component: {fileID: 5540884780720535922}
+  - component: {fileID: 2030325649923496056}
+  m_Layer: 0
+  m_Name: HittBox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4335023603117966269
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5929934630632852444}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.00000001786975, y: 0.000000085779895, z: -0.000000035066826, w: 1}
+  m_LocalPosition: {x: 0, y: -0.19500013, z: 0.059000086}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7155178736912482796}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &5540884780720535922
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5929934630632852444}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.21607524, y: 0.26966208, z: 0.13210727}
+  m_Center: {x: 0.029660918, y: 0.36517286, z: -0.097715795}
+--- !u!114 &2030325649923496056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5929934630632852444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92c742e53ab55424fbef043b4cf26006, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MeleeHitbox
 --- !u!1 &5963020192802786272
 GameObject:
   m_ObjectHideFlags: 0
@@ -2257,6 +2323,7 @@ Transform:
   - {fileID: 7672989129926882892}
   - {fileID: 321329325092378920}
   - {fileID: 1136016344616872666}
+  - {fileID: 4335023603117966269}
   m_Father: {fileID: 6443172249369529228}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7142918866171624523
@@ -2674,6 +2741,7 @@ GameObject:
   - component: {fileID: 8696339792906574722}
   - component: {fileID: 2660222153444671195}
   - component: {fileID: 3102042254275938764}
+  - component: {fileID: 1137848249990951581}
   m_Layer: 0
   m_Name: Enemy1
   m_TagString: Untagged
@@ -2823,6 +2891,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   healthSlider: {fileID: 9044250415972439490}
+--- !u!114 &1137848249990951581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8518708492549096309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c62e62fbb6e77ee44bffbbc8502385ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack
+  attackType: 0
+  fireballPrefab: {fileID: 0}
+  firePoint: {fileID: 0}
+  rangedDamage: 10
+  meleeHitbox: {fileID: 5540884780720535922}
+  meleeDamage: 20
 --- !u!1 &8711865583306177634
 GameObject:
   m_ObjectHideFlags: 0
