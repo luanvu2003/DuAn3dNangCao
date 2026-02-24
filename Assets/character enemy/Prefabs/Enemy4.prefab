@@ -469,6 +469,7 @@ Transform:
   - {fileID: 7855318104505296942}
   - {fileID: 5945075724812546458}
   - {fileID: 1383369640210869535}
+  - {fileID: 7290471450129443520}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &8231009828173065024
@@ -578,10 +579,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waypointHolder: {fileID: 8697036567218012205, guid: c00612ad67a5b3c489b1148a14629804, type: 3}
-  players:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   chaseRange: 9
   attackRange: 8
 --- !u!114 &561695089935362205
@@ -591,7 +588,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2146224155487971555}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b51700e16c25cf84bbc3b87196a877b3, type: 3}
   m_Name: 
@@ -615,7 +612,7 @@ MonoBehaviour:
   fireballPrefab: {fileID: 8646595517538680872, guid: c00612ad67a5b3c489b1148a14629804, type: 3}
   firePoint: {fileID: 1300294172364188399}
   rangedDamage: 10
-  meleeHitbox: {fileID: 0}
+  meleeHitbox: {fileID: 4419681668664634817, guid: c00612ad67a5b3c489b1148a14629804, type: 3}
   meleeDamage: 20
 --- !u!114 &1869830561479348766
 MonoBehaviour:
@@ -1539,8 +1536,7 @@ Transform:
   m_LocalPosition: {x: -0.1033361, y: -0.04771339, z: 0.0020032167}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 7290471450129443520}
+  m_Children: []
   m_Father: {fileID: 5945075724812546458}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4680348162173123738
@@ -2219,13 +2215,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6746607917505373905}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.04178915, y: -0.000025262834, z: -0.000446507, w: 0.9991264}
-  m_LocalPosition: {x: 0.0000000018809332, y: 0.40083838, z: 0.0000000010048017}
+  m_LocalRotation: {x: 0.0065312823, y: -0.03469222, z: 0.99937665, w: 0.00029595627}
+  m_LocalPosition: {x: -0.10296284, y: 0.4840506, z: 0.001191298}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 133993264325255544}
-  m_Father: {fileID: 5411322196922497798}
+  m_Father: {fileID: 2543049767281487526}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6875226771127437969
 GameObject:

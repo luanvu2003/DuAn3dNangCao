@@ -3,25 +3,34 @@ using System.Collections;
 
 public class Pillar : MonoBehaviour
 {
-    public int health = 3;
+    [Header("Settings")]
+    public float maxHealth = 100f; // Tăng máu lên 100
+    private float currentHealth;
+
+    [Header("Shake Settings")]
+    public float duration = 0.2f;   
+    public float magnitude = 0.2f; 
 
     private Vector3 originalPos;
     private bool isShaking;
 
     void Start()
     {
+        currentHealth = maxHealth;
         originalPos = transform.localPosition;
     }
 
-    public void TakeDamage(int damage)
+    // Đổi thành float để khớp với hệ thống damage của Player
+    public void TakeDamage(float damage)
     {
-        health -= damage;
+        currentHealth -= damage;
+        Debug.Log("Cột bị đánh! Máu còn: " + currentHealth);
 
         // Rung mỗi lần bị đánh
         if (!isShaking)
             StartCoroutine(Shake());
 
-        if (health <= 0)
+        if (currentHealth <= 0)
         {
             DestroyPillar();
         }
@@ -30,10 +39,6 @@ public class Pillar : MonoBehaviour
     IEnumerator Shake()
     {
         isShaking = true;
-
-        float duration = 0.1f;     // thời gian rung
-        float magnitude = 0.08f;   // độ mạnh rung
-
         float elapsed = 0f;
 
         while (elapsed < duration)
@@ -53,7 +58,12 @@ public class Pillar : MonoBehaviour
 
     void DestroyPillar()
     {
-        QuestManager.Instance.AddProgress(1);
+        // Kiểm tra null để tránh lỗi nếu chưa có QuestManager
+        if (QuestManager.Instance != null)
+        {
+            QuestManager.Instance.AddProgress(1);
+        }
+        
         Destroy(gameObject);
     }
 }

@@ -112,6 +112,12 @@ public class FighterAttack : MonoBehaviour
                 GameObject vfx = Instantiate(hitEffectPrefab, hitPos, Quaternion.identity);
                 Destroy(vfx, 1f); // Xóa effect sau 1 giây
             }
+
+            Pillar pillar = enemy.GetComponent<Pillar>();
+            if (pillar != null)
+            {
+                pillar.TakeDamage(damage);
+            }
         }
     }
 
