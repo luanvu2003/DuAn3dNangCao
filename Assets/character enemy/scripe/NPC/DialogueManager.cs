@@ -57,6 +57,7 @@ public class DialogueManager : MonoBehaviour
         if (node.text.Contains("tiêu diệt đủ 5"))
         {
             QuestManager.Instance.StartDestroyPillarQuest();
+            FindObjectOfType<WorldSpawner>().StartSpawning();
         }
 
         foreach (Transform child in choicesParent)

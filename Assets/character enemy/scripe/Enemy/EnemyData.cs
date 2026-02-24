@@ -7,6 +7,17 @@ public class EnemyData : MonoBehaviour
     public Transform player;
 
     [Header("Ranges")]
-    public float chaseRange = 8f;     // phát hiện player
-    public float attackRange = 1.5f;  // tầm đánh (mỗi enemy khác nhau)
+    public float chaseRange = 8f;
+    public float attackRange = 1.5f;
+
+    void Awake()
+    {
+        // Tự tìm player khi spawn
+        GameObject p = GameObject.FindGameObjectWithTag("Player");
+
+        if (p != null)
+        {
+            player = p.transform;
+        }
+    }
 }
