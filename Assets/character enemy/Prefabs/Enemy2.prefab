@@ -1047,7 +1047,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waypointHolder: {fileID: 0}
-  players: []
   chaseRange: 8
   attackRange: 1.5
 --- !u!114 &4520710335441823839
@@ -1076,7 +1075,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c62e62fbb6e77ee44bffbbc8502385ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackType: 0
+  attackType: 1
   fireballPrefab: {fileID: 0}
   firePoint: {fileID: 0}
   rangedDamage: 10
@@ -1934,7 +1933,7 @@ GameObject:
   - component: {fileID: 7874467016046383749}
   - component: {fileID: 5378227378166785615}
   - component: {fileID: 4990690651102951214}
-  - component: {fileID: 4526662551911104767}
+  - component: {fileID: 7102366575615865109}
   m_Layer: 3
   m_Name: Hammer1_1_3
   m_TagString: Untagged
@@ -2031,7 +2030,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.44209075, y: 1.1474992, z: 0.2010543}
   m_Center: {x: -0.00000009140453, y: -0.016755883, z: 0.00000005983438}
---- !u!114 &4526662551911104767
+--- !u!114 &7102366575615865109
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2040,9 +2039,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 5882740418562934682}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92c742e53ab55424fbef043b4cf26006, type: 3}
+  m_Script: {fileID: 11500000, guid: 85dc13a64ee24d748bb1193626cff146, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damage: 20
+  targetTag: Player
 --- !u!1 &5891066497126469210
 GameObject:
   m_ObjectHideFlags: 0

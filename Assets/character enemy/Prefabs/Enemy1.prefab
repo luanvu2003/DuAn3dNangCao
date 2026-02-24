@@ -1779,10 +1779,10 @@ GameObject:
   m_Component:
   - component: {fileID: 4335023603117966269}
   - component: {fileID: 5540884780720535922}
-  - component: {fileID: 2030325649923496056}
+  - component: {fileID: 6294227106802960135}
   m_Layer: 3
   m_Name: HittBox
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1823,7 +1823,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.21607524, y: 0.26966208, z: 0.13210727}
   m_Center: {x: 0.029660918, y: 0.36517286, z: -0.097715795}
---- !u!114 &2030325649923496056
+--- !u!114 &6294227106802960135
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1832,9 +1832,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 5929934630632852444}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92c742e53ab55424fbef043b4cf26006, type: 3}
+  m_Script: {fileID: 11500000, guid: 85dc13a64ee24d748bb1193626cff146, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MeleeHitbox
+  m_EditorClassIdentifier: 
+  damage: 20
+  targetTag: Player
 --- !u!1 &5963020192802786272
 GameObject:
   m_ObjectHideFlags: 0
@@ -2874,7 +2876,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waypointHolder: {fileID: 0}
-  players: []
   chaseRange: 8
   attackRange: 1.5
 --- !u!114 &3102042254275938764
@@ -2903,7 +2904,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c62e62fbb6e77ee44bffbbc8502385ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack
-  attackType: 0
+  attackType: 1
   fireballPrefab: {fileID: 0}
   firePoint: {fileID: 0}
   rangedDamage: 10

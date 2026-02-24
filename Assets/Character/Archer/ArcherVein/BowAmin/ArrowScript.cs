@@ -2,11 +2,11 @@
 
 public class ArrowScript : MonoBehaviour
 {
-    public int damage = 20; 
-    public ParticleSystem hitEffect; 
+    public int damage = 20;
+    public ParticleSystem hitEffect;
 
     // Biến mới: Có xuyên thấu hay không?
-    public bool isPiercing = false; 
+    public bool isPiercing = false;
 
     void OnCollisionEnter(Collision collision)
     {
@@ -23,15 +23,22 @@ public class ArrowScript : MonoBehaviour
             SpawnEffect();
 
             // Logic Xuyên thấu:
-            if (isPiercing) 
+            if (isPiercing)
             {
                 // Nếu là xuyên thấu thì KHÔNG destroy, cứ để nó bay tiếp
                 // Lưu ý: Cần tắt va chạm vật lý giữa mũi tên và quái để không bị nảy ra
                 Physics.IgnoreCollision(collision.collider, GetComponent<Collider>());
-                return; 
+                return;
             }
         }
-
+        Pillar pillar = collision.gameObject.GetComponent<Pillar>();
+        if (pillar != null)
+        {
+            pillar.TakeDamage(damage);
+            SpawnEffect(); // Nổ hiệu ứng nếu có
+            Destroy(gameObject); // Hủy mũi tên
+            return; // Kết thúc luôn để không chạy code dưới
+        }
         // TRƯỜNG HỢP 2: Trúng Tường/Đất (Không phải Enemy)
         // Hoặc trúng Enemy nhưng không có xuyên thấu -> Hủy
         SpawnEffect();
@@ -44,7 +51,7 @@ public class ArrowScript : MonoBehaviour
         {
             ParticleSystem effect = Instantiate(hitEffect, transform.position, Quaternion.identity);
             effect.Play();
-            Destroy(effect.gameObject, 2f); 
+            Destroy(effect.gameObject, 2f);
         }
     }
 }

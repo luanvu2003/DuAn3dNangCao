@@ -24,7 +24,7 @@ public class MagicHitbox : MonoBehaviour
         {
             // Tìm máu của Enemy
             EnemyHealth enemy = other.GetComponent<EnemyHealth>();
-            
+
             if (enemy != null)
             {
                 enemy.TakeDamage(damage);
@@ -36,7 +36,11 @@ public class MagicHitbox : MonoBehaviour
             {
                 MagicSkills.instance.AddRage(10f);
             }
-
+            Pillar pillar = other.GetComponent<Pillar>();
+            if (pillar != null)
+            {
+                pillar.TakeDamage(damage);
+            }
             // Hủy cục đạn sau khi trúng
             Destroy(gameObject);
         }
