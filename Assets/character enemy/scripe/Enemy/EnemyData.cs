@@ -1,23 +1,28 @@
 using UnityEngine;
+// Không cần using System.Collections.Generic nữa nếu dùng mảng
 
 public class EnemyData : MonoBehaviour
 {
     [Header("References")]
     public Transform waypointHolder;
-    public Transform player;
+
+    // ĐỔI LIST THÀNH ARRAY []
+    public Transform[] players; 
 
     [Header("Ranges")]
-    public float chaseRange = 8f;
+    public float chaseRange = 8f;     
     public float attackRange = 1.5f;
 
-    void Awake()
+    public Transform GetActivePlayer()
     {
-        // Tự tìm player khi spawn
-        GameObject p = GameObject.FindGameObjectWithTag("Player");
-
-        if (p != null)
+        // Duyệt mảng cũng y hệt duyệt List
+        foreach (Transform p in players)
         {
-            player = p.transform;
+            if (p != null && p.gameObject.activeInHierarchy)
+            {
+                return p;
+            }
         }
+        return null; 
     }
 }

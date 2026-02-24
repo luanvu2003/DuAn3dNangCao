@@ -4,9 +4,19 @@ public class EnemyFireballCaster : MonoBehaviour
 {
     public GameObject fireballPrefab;
     public Transform firePoint;
+    public int damage = 15; // Thêm biến damage
 
     public void ShootFireball()
     {
-        Instantiate(fireballPrefab, firePoint.position, firePoint.rotation);
+        if (fireballPrefab == null || firePoint == null) return;
+
+        GameObject bullet = Instantiate(fireballPrefab, firePoint.position, firePoint.rotation);
+        
+        // Lấy script Fireballl và set damage
+        Fireballl fb = bullet.GetComponent<Fireballl>();
+        if (fb != null)
+        {
+            fb.SetDamage(damage);
+        }
     }
 }

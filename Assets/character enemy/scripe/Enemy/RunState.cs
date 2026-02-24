@@ -11,7 +11,7 @@ public class RunState : StateMachineBehaviour
         agent = animator.GetComponentInParent<NavMeshAgent>();
         data  = animator.GetComponentInParent<EnemyData>();
 
-        if (agent == null || data == null || data.player == null) return;
+        if (agent == null || data == null) return;
 
         agent.isStopped = false;
         agent.speed = 4f;
@@ -20,17 +20,29 @@ public class RunState : StateMachineBehaviour
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (agent == null || data == null || data.player == null) return;
+        if (agent == null || data == null) return;
 
+        // --- SỬA LỖI: Tìm mục tiêu đang sống ---
+        Transform target = data.GetActivePlayer();
+
+        // Nếu không tìm thấy ai (chết hết hoặc tắt hết) -> Về đi tuần
+        if (target == null)
+        {
+            animator.SetBool("isRunning", false);
+            animator.SetBool("isPatrolling", true);
+            return;
+        }
+
+        // --- Thay data.player bằng biến target ---
         float distance = Vector3.Distance(
             animator.transform.position,
-            data.player.position
+            target.position
         );
 
         // 👉 CHƯA VÀO TẦM → ĐUỔI
         if (distance > data.attackRange)
         {
-            agent.SetDestination(data.player.position);
+            agent.SetDestination(target.position);
         }
 
         // ✅ VÀO TẦM → ĐÁNH
@@ -42,7 +54,7 @@ public class RunState : StateMachineBehaviour
             return;
         }
 
-        // ❌ Mất dấu
+        // ❌ Mất dấu (Xa quá) -> Về đi tuần
         if (distance > data.chaseRange)
         {
             animator.SetBool("isRunning", false);
@@ -52,7 +64,7 @@ public class RunState : StateMachineBehaviour
 
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (agent != null)
+        if (agent != null && agent.enabled && agent.isOnNavMesh)
             agent.isStopped = false;
     }
 }
