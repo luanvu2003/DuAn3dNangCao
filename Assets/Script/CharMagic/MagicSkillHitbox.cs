@@ -1,32 +1,49 @@
 using UnityEngine;
 
-public class MagicSkillHitbox : MonoBehaviour
+public class MagicHitbox : MonoBehaviour
 {
-    public string enemyTag = "Enemy";
-    public float rageAmount = 10f; // Nộ nhận được mỗi hit
-
-    private CharacterBaseStats myOwner; // Chủ nhân của hitbox này
+    public int damage = 25; // Sát thương phép
+    public float speed = 10f; // Tốc độ bay (nếu chưa có script bay)
+    public float lifeTime = 3f; // Thời gian tồn tại
 
     void Start()
     {
-        // Tự tìm script chỉ số trên người nhân vật (tìm ở cha)
-        myOwner = GetComponentInParent<CharacterBaseStats>();
+        Destroy(gameObject, lifeTime); // Tự hủy sau 3s nếu không trúng gì
+    }
+
+    void Update()
+    {
+        // Bay thẳng về phía trước
+        transform.Translate(Vector3.forward * speed * Time.deltaTime);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag(enemyTag))
+        // Nếu trúng Enemy
+        if (other.CompareTag("Enemy"))
         {
-            // Cách 1: Nếu hitbox gắn trên người -> Gọi thẳng script cha
-            if (myOwner != null)
+            // Tìm máu của Enemy
+            EnemyHealth enemy = other.GetComponent<EnemyHealth>();
+            
+            if (enemy != null)
             {
-                myOwner.AddRage(rageAmount);
+                enemy.TakeDamage(damage);
+                Debug.Log("Magic hit Enemy: " + damage);
             }
-            // Cách 2: Nếu là đạn bắn ra xa (không tìm được cha) -> Dùng Instance (chấp nhận rủi ro nhỏ khi swap nhanh)
-            else if (MagicSkills.instance != null)
+
+            // Cộng nộ cho Magic (Gọi về instance của MagicSkills)
+            if (MagicSkills.instance != null)
             {
-                MagicSkills.instance.AddRage(rageAmount);
+                MagicSkills.instance.AddRage(10f);
             }
+
+            // Hủy cục đạn sau khi trúng
+            Destroy(gameObject);
+        }
+        else if (!other.CompareTag("Player") && !other.CompareTag("Untagged"))
+        {
+            // Trúng tường/đất thì hủy luôn
+            Destroy(gameObject);
         }
     }
 }

@@ -1,6 +1,5 @@
 using UnityEngine;
 
-// KẾ THỪA TỪ CharacterBaseStats ĐỂ CÓ MÁU VÀ NỘ
 public class MagicSkills : CharacterBaseStats 
 {
     public static MagicSkills instance;
@@ -12,54 +11,49 @@ public class MagicSkills : CharacterBaseStats
 
     [Header("Skill Q Settings (Ultimate)")]
     public float cooldownQ = 5f; 
-    public float rageCostQ = 100f; // Tốn bao nhiêu nộ để dùng Q?
+    public float rageCostQ = 100f; 
 
     [Header("Components")]
     public Animator anim;
 
-    // Khi nhân vật được BẬT lên (Swap tới), nó sẽ tự gán instance
     void OnEnable()
     {
         instance = this;
     }
 
-    protected override void Start() // Dùng override vì lớp cha cũng có Start
+    protected override void Start() 
     {
-        base.Start(); // Gọi hàm Start của cha để set máu
+        base.Start(); 
         
         if (anim == null) anim = GetComponent<Animator>();
         if (castPoint == null) castPoint = transform;
     }
 
-    void Update()
+    // --- SỬA Ở ĐÂY ---
+    // Phải đổi thành protected override void Update() để đồng bộ với cha
+    // Hoặc giữ nguyên void Update() nhưng BẮT BUỘC phải có base.Update()
+    protected override void Update()
     {
+        base.Update(); // <--- DÒNG QUAN TRỌNG NHẤT: Gọi lớp cha để nó cập nhật UI Cooldown
+
         // --- XỬ LÝ SKILL E ---
-        // Kiểm tra phím bấm VÀ hỏi hệ thống Cooldown xem Skill E xong chưa
         if (Input.GetKeyDown(KeyCode.E))
         {
-            if (IsSkillReady("Skill_E")) // "Skill_E" là tên định danh
+            if (IsSkillReady("Skill_E")) 
             {
                 UseSkillE();
             }
-            else
-            {
-                Debug.Log("Skill E đang hồi! Còn: " + GetRemainingCooldown("Skill_E"));
-            }
+            // else: Đang hồi
         }
 
         // --- XỬ LÝ SKILL Q ---
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            // Kiểm tra Cooldown Q VÀ Kiểm tra đủ Nộ không (currentRage có sẵn từ lớp cha)
             if (IsSkillReady("Skill_Q"))
             {
                 if (currentRage >= rageCostQ)
                 {
                     UseSkillQ();
-                }
-                else
-                {
-                    Debug.Log("Chưa đủ nộ: " + currentRage + "/" + rageCostQ);
                 }
             }
         }
@@ -69,11 +63,9 @@ public class MagicSkills : CharacterBaseStats
     {
         if (anim != null) anim.SetTrigger("SkillE");
         
-        // Spawn skill logic (giữ nguyên của bạn)
         SpawnSkillE();
 
-        // KÍCH HOẠT HỒI CHIÊU CHO BASE SYSTEM
-        // Dù tắt nhân vật đi, cái này vẫn đếm đúng theo thời gian thực
+        // Kích hoạt hồi chiêu
         StartCooldown("Skill_E", cooldownE);
     }
 
@@ -81,24 +73,17 @@ public class MagicSkills : CharacterBaseStats
     {
         if (anim != null) anim.SetTrigger("SkillQ");
 
-        // Trừ nộ (Biến currentRage từ lớp cha)
         currentRage -= rageCostQ;
-        
-        // Tính hồi chiêu cho Q
         StartCooldown("Skill_Q", cooldownQ);
-
-        Debug.Log("ULTIMATE KÍCH HOẠT!");
+        Debug.Log("MAGIC ULTIMATE!");
     }
 
     public void SpawnSkillE()
     {
         if (skillEPrefab != null)
         {
-            Instantiate(skillEPrefab, castPoint.position, skillEPrefab.transform.rotation);
+            // Sinh ra đạn
+            Instantiate(skillEPrefab, castPoint.position, castPoint.rotation);
         }
     }
-    
-    // Hàm AddRage đã có ở lớp cha (CharacterBaseStats), 
-    // nhưng nếu bạn muốn logic riêng (ví dụ kẹp nộ), có thể Override lại.
-    // Ở đây mình dùng luôn hàm của cha cho gọn.
 }
