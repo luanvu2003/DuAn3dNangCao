@@ -1,104 +1,106 @@
 using UnityEngine;
 
-// KẾ THỪA TỪ CharacterBaseStats ĐỂ CÓ MÁU VÀ NỘ
 public class ArcherSkills : CharacterBaseStats 
 {
     public static ArcherSkills instance;
 
     [Header("Skill E Settings")]
-    public GameObject skillEPrefab; 
-    public Transform castPoint;     
+    public GameObject arrowPrefab; 
+    public Transform firePoint;     
     public float cooldownE = 3f;
 
     [Header("Skill Q Settings (Ultimate)")]
     public float cooldownQ = 5f; 
-    public float rageCostQ = 100f; // Tốn bao nhiêu nộ để dùng Q?
+    public float rageCostQ = 100f; 
 
     [Header("Components")]
     public Animator anim;
 
-    // Khi nhân vật được BẬT lên (Swap tới), nó sẽ tự gán instance
+    private bool isAiming = false; 
+
     void OnEnable()
     {
         instance = this;
+        isAiming = false; // Reset trạng thái để tránh lỗi anim
     }
 
-    protected override void Start() // Dùng override vì lớp cha cũng có Start
+    protected override void Start() 
     {
-        base.Start(); // Gọi hàm Start của cha để set máu
-        
+        base.Start(); 
         if (anim == null) anim = GetComponent<Animator>();
-        if (castPoint == null) castPoint = transform;
+        if (firePoint == null) firePoint = transform;
     }
 
     void Update()
     {
-        // --- XỬ LÝ SKILL E ---
-        // Kiểm tra phím bấm VÀ hỏi hệ thống Cooldown xem Skill E xong chưa
-        if (Input.GetKeyDown(KeyCode.E))
+        // --- LOGIC SKILL E ---
+        // 1. GIỮ E ĐỂ NGẮM
+        if (Input.GetKey(KeyCode.E))
         {
-            if (IsSkillReady("Skill_E")) // "Skill_E" là tên định danh
+            // Chỉ cho ngắm nếu skill đã hồi xong
+            if (IsSkillReady("Skill_E"))
             {
-                UseSkillE();
-            }
-            else
-            {
-                Debug.Log("Skill E đang hồi! Còn: " + GetRemainingCooldown("Skill_E"));
+                if (!isAiming)
+                {
+                    isAiming = true;
+                    // Bật trạng thái ngắm -> Animator sẽ chạy clip "Archer_AimLoop"
+                    if(anim) anim.SetBool("IsAiming", true);
+                }
+
+                // 2. CLICK CHUỘT TRÁI ĐỂ BẮN (Khi đang giữ E)
+                if (Input.GetMouseButtonDown(0))
+                {
+                    FireArrow();
+                }
             }
         }
 
-        // --- XỬ LÝ SKILL Q ---
-        if (Input.GetKeyDown(KeyCode.Q))
+        // 3. THẢ E -> HỦY NGẮM (Nếu chưa bắn)
+        if (Input.GetKeyUp(KeyCode.E))
         {
-            // Kiểm tra Cooldown Q VÀ Kiểm tra đủ Nộ không (currentRage có sẵn từ lớp cha)
-            if (IsSkillReady("Skill_Q"))
-            {
-                if (currentRage >= rageCostQ)
-                {
-                    UseSkillQ();
-                }
-                else
-                {
-                    Debug.Log("Chưa đủ nộ: " + currentRage + "/" + rageCostQ);
-                }
-            }
+            isAiming = false;
+            if(anim) anim.SetBool("IsAiming", false);
+        }
+
+        // --- LOGIC SKILL Q (Giữ nguyên) ---
+        if (Input.GetKeyDown(KeyCode.Q) && IsSkillReady("Skill_Q"))
+        {
+            if (currentRage >= rageCostQ) UseSkillQ();
         }
     }
 
-    void UseSkillE()
+    void FireArrow()
     {
-        if (anim != null) anim.SetTrigger("ArcherSkillE");
-        
-        // Spawn skill logic (giữ nguyên của bạn)
-        SpawnSkillE();
+        // Kích hoạt Trigger để Animator chuyển từ "AimLoop" sang "FireRelease"
+        if (anim) anim.SetTrigger("FireE");
 
-        // KÍCH HOẠT HỒI CHIÊU CHO BASE SYSTEM
-        // Dù tắt nhân vật đi, cái này vẫn đếm đúng theo thời gian thực
+        // Sinh mũi tên
+        // Mẹo: Nên delay hàm này khoảng 0.1s để khớp với động tác buông tay
+        // Nhưng tạm thời để thế này cho nhạy
+        SpawnArrow();
+
+        // Tính hồi chiêu
         StartCooldown("Skill_E", cooldownE);
+
+        // Reset trạng thái ngắm ngay lập tức để không bị kẹt
+        isAiming = false;
+        if (anim) anim.SetBool("IsAiming", false);
     }
 
-    void UseSkillQ()
+    void SpawnArrow()
     {
-        if (anim != null) anim.SetTrigger("ArcherSkillQ");
-
-        // Trừ nộ (Biến currentRage từ lớp cha)
-        currentRage -= rageCostQ;
-        
-        // Tính hồi chiêu cho Q
-        StartCooldown("Skill_Q", cooldownQ);
-
-        Debug.Log("ULTIMATE KÍCH HOẠT!");
-    }
-
-    public void SpawnSkillE()
-    {
-        if (skillEPrefab != null)
+        if (arrowPrefab != null && firePoint != null)
         {
-            Instantiate(skillEPrefab, castPoint.position, skillEPrefab.transform.rotation);
+            // Bắn ra mũi tên
+            Instantiate(arrowPrefab, firePoint.position, transform.rotation);
         }
     }
     
-    // Hàm AddRage đã có ở lớp cha (CharacterBaseStats), 
-    // nhưng nếu bạn muốn logic riêng (ví dụ kẹp nộ), có thể Override lại.
-    // Ở đây mình dùng luôn hàm của cha cho gọn.
+    // ... (Giữ nguyên phần Skill Q và hàm khác) ...
+    void UseSkillQ()
+    {
+         if (anim) anim.SetTrigger("ArcherSkillQ");
+         currentRage -= rageCostQ;
+         StartCooldown("Skill_Q", cooldownQ);
+    }
 }
