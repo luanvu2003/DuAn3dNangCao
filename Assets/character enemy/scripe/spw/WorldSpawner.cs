@@ -7,30 +7,28 @@ public class WorldSpawner : MonoBehaviour
     [Header("Enemy Prefabs")]
     public GameObject[] enemyPrefabs;
 
-    public Transform player;
+    [Header("Players")]
+    public Transform[] players;
 
     [Header("Chunk Settings")]
     public int chunkSize = 20;
-    public int enemiesPerChunk = 3;     // spawn mỗi chunk
-    public int renderDistance = 1;      // 1 = 3x3 chunk
+    public int enemiesPerChunk = 3;
+    public int renderDistance = 1;
 
     [Header("Spawn Settings")]
     public float minDistanceFromPlayer = 5f;
     public float navMeshSearchRadius = 3f;
 
     [Header("Mob Limit")]
-    public int maxTotalEnemies = 20;    // GIỚI HẠN TỔNG QUÁI
+    public int maxTotalEnemies = 20;
 
-    private Vector2Int currentChunk;
     private Dictionary<Vector2Int, List<GameObject>> activeChunks =
         new Dictionary<Vector2Int, List<GameObject>>();
 
-    public bool canSpawn = false; // ban đầu tắt
+    public bool canSpawn = false;
 
     void Start()
     {
-        currentChunk = GetPlayerChunk();
-
         if (canSpawn)
             UpdateChunks();
     }
@@ -39,42 +37,41 @@ public class WorldSpawner : MonoBehaviour
     {
         if (!canSpawn) return;
 
-        Vector2Int newChunk = GetPlayerChunk();
-
-        if (newChunk != currentChunk)
-        {
-            currentChunk = newChunk;
-            UpdateChunks();
-        }
+        UpdateChunks();
     }
 
-    Vector2Int GetPlayerChunk()
-    {
-        int chunkX = Mathf.FloorToInt(player.position.x / chunkSize);
-        int chunkZ = Mathf.FloorToInt(player.position.z / chunkSize);
-        return new Vector2Int(chunkX, chunkZ);
-    }
+    // =========================
+    // CHUNK SYSTEM
+    // =========================
 
     void UpdateChunks()
     {
         HashSet<Vector2Int> neededChunks = new HashSet<Vector2Int>();
 
-        // Tính các chunk cần giữ (3x3)
-        for (int x = -renderDistance; x <= renderDistance; x++)
+        foreach (Transform p in players)
         {
-            for (int z = -renderDistance; z <= renderDistance; z++)
-            {
-                Vector2Int chunk = new Vector2Int(currentChunk.x + x, currentChunk.y + z);
-                neededChunks.Add(chunk);
+            if (p == null || !p.gameObject.activeInHierarchy)
+                continue;
 
-                if (!activeChunks.ContainsKey(chunk))
+            Vector2Int playerChunk = GetChunkFromPosition(p.position);
+
+            for (int x = -renderDistance; x <= renderDistance; x++)
+            {
+                for (int z = -renderDistance; z <= renderDistance; z++)
                 {
-                    SpawnChunk(chunk);
+                    Vector2Int chunk =
+                        new Vector2Int(playerChunk.x + x, playerChunk.y + z);
+
+                    neededChunks.Add(chunk);
+
+                    if (!activeChunks.ContainsKey(chunk))
+                    {
+                        SpawnChunk(chunk);
+                    }
                 }
             }
         }
 
-        // Xoá chunk không còn trong phạm vi
         List<Vector2Int> chunksToRemove = new List<Vector2Int>();
 
         foreach (var chunk in activeChunks.Keys)
@@ -91,6 +88,17 @@ public class WorldSpawner : MonoBehaviour
         }
     }
 
+    Vector2Int GetChunkFromPosition(Vector3 position)
+    {
+        int chunkX = Mathf.FloorToInt(position.x / chunkSize);
+        int chunkZ = Mathf.FloorToInt(position.z / chunkSize);
+        return new Vector2Int(chunkX, chunkZ);
+    }
+
+    // =========================
+    // SPAWN
+    // =========================
+
     void SpawnChunk(Vector2Int chunkCoord)
     {
         if (GetTotalEnemyCount() >= maxTotalEnemies)
@@ -106,7 +114,9 @@ public class WorldSpawner : MonoBehaviour
             Vector3 spawnPos = GetRandomPositionInChunk(chunkCoord);
 
             int randomIndex = Random.Range(0, enemyPrefabs.Length);
-            GameObject enemy = Instantiate(enemyPrefabs[randomIndex], spawnPos, Quaternion.identity);
+
+            GameObject enemy =
+                Instantiate(enemyPrefabs[randomIndex], spawnPos, Quaternion.identity);
 
             spawnedEnemies.Add(enemy);
         }
@@ -140,18 +150,43 @@ public class WorldSpawner : MonoBehaviour
             float randomX = Random.Range(startX, startX + chunkSize);
             float randomZ = Random.Range(startZ, startZ + chunkSize);
 
-            Vector3 randomPoint = new Vector3(randomX, player.position.y, randomZ);
+            // Bắt đầu từ cao hơn player để chắc chắn nằm trên map
+            float sampleY = 200f;
 
-            if (NavMesh.SamplePosition(randomPoint, out hit, navMeshSearchRadius, NavMesh.AllAreas))
+            foreach (Transform p in players)
             {
-                if (Vector3.Distance(hit.position, player.position) >= minDistanceFromPlayer)
+                if (p != null && p.gameObject.activeInHierarchy)
                 {
-                    return hit.position;
+                    sampleY = p.position.y + 50f;
+                    break;
                 }
+            }
+
+            Vector3 randomPoint = new Vector3(randomX, sampleY, randomZ);
+
+            if (NavMesh.SamplePosition(randomPoint, out hit, 100f, NavMesh.AllAreas))
+            {
+                bool tooClose = false;
+
+                foreach (Transform p in players)
+                {
+                    if (p == null || !p.gameObject.activeInHierarchy)
+                        continue;
+
+                    if (Vector3.Distance(hit.position, p.position) < minDistanceFromPlayer)
+                    {
+                        tooClose = true;
+                        break;
+                    }
+                }
+
+                if (!tooClose)
+                    return hit.position;
             }
         }
 
-        return player.position + Vector3.forward * minDistanceFromPlayer;
+        // Nếu fail thì KHÔNG spawn
+        return new Vector3(float.MinValue, float.MinValue, float.MinValue);
     }
 
     int GetTotalEnemyCount()
@@ -171,7 +206,6 @@ public class WorldSpawner : MonoBehaviour
         if (canSpawn) return;
 
         canSpawn = true;
-        currentChunk = GetPlayerChunk();
         UpdateChunks();
     }
 }
