@@ -10,7 +10,7 @@ public class QuestManager : MonoBehaviour
     public static QuestManager Instance;
 
     [Header("UI References")]
-    public GameObject questPanel;       
+    public GameObject questPanel;
     public TMP_Text questTitleText;
     public TMP_Text questProgressText;
 
@@ -43,23 +43,39 @@ public class QuestManager : MonoBehaviour
     }
 
     // --- GÁN HÀM NÀY VÀO NÚT "CHẤP NHẬN" ---
-public void OnClickAcceptQuest()
-{
-    if (acceptButton != null) acceptButton.SetActive(false);
-        
-    StartDestroyPillarQuest();
+    public void OnClickAcceptQuest()
+    {
+        Debug.Log("==> Đã bấm nút Chấp Nhận!");
 
-    // 🔥 Bật trụ
-    if (pillarsParent != null)
-        pillarsParent.SetActive(true);
+        if (acceptButton != null) acceptButton.SetActive(false);
 
-    // 🔥 Bật spawn quái
-    if (worldSpawner != null)
-        worldSpawner.StartSpawning();
+        StartDestroyPillarQuest();
 
-    if (GameCursorManager.Instance != null)
-        GameCursorManager.Instance.isStoryUIOpen = false;
-}
+        // --- DEBUG KIỂM TRA PILLARS ---
+        if (pillarsParent != null)
+        {
+            pillarsParent.SetActive(true);
+            Debug.Log("==> Đã bật PillarsParent thành công: " + pillarsParent.name);
+        }
+        else
+        {
+            Debug.LogError("==> LỖI TO: Bạn QUÊN kéo GameObject vào ô 'Pillars Parent' trong Inspector rồi!");
+        }
+
+        // --- DEBUG KIỂM TRA SPAWNER ---
+        if (worldSpawner != null)
+        {
+            worldSpawner.StartSpawning();
+            Debug.Log("==> Đã gọi Spawner.");
+        }
+        else
+        {
+            Debug.LogError("==> LỖI: Bạn chưa kéo World Spawner vào!");
+        }
+
+        if (GameCursorManager.Instance != null)
+            GameCursorManager.Instance.isStoryUIOpen = false;
+    }
 
     public void StartDestroyPillarQuest()
     {

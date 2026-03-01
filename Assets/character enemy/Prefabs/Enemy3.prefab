@@ -3103,9 +3103,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f5a84274f5b6bd428bf1680434396f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  waypointHolder: {fileID: 0}
   chaseRange: 8
   attackRange: 1.5
-  patrolRadius: 10
 --- !u!114 &575721500307044266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3120,7 +3120,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   healthSlider: {fileID: 6336398101775881511}
-  itemToDrop: {fileID: 0}
+  itemToDrop: {fileID: 7215856734752065869, guid: 586173b202a1b7f49ad783071e8d5fd1, type: 3}
   minDropAmount: 1
   maxDropAmount: 5
   dropChance: 100
