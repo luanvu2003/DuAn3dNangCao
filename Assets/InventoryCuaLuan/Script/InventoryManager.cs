@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 using UnityEngine.EventSystems;
 
 public class InventoryManager : MonoBehaviour
@@ -11,36 +10,29 @@ public class InventoryManager : MonoBehaviour
     public GameObject inventoryUI;
     public Transform slotContainer;
     public GameObject slotPrefab;
-
-    [Header("Context Menu")] // [MỚI] Kéo cái bảng ContextMenu (Panel nhỏ) vào đây
-    public GameObject contextMenu;
+    public GameObject contextMenu; // Panel menu chuột phải
 
     [Header("Data")]
     public List<InventoryItem> inventory = new List<InventoryItem>();
-
-    private InventoryItem selectedItem; // Món đồ đang được chọn để xử lý
+    private InventoryItem selectedItem;
     private bool isInventoryOpen = false;
 
     void Awake() { Instance = this; }
 
     void Start()
     {
-        // Xóa sạch túi lúc đầu game (nếu muốn)
-        // inventory.Clear(); 
-
         inventoryUI.SetActive(false);
-        if (contextMenu != null) contextMenu.SetActive(false); // Đảm bảo menu ẩn lúc đầu
+        if (contextMenu != null) contextMenu.SetActive(false);
     }
 
     void Update()
     {
+        // Bật tắt túi bằng phím I
         if (Input.GetKeyDown(KeyCode.I)) ToggleInventory();
 
-        // --- ĐOẠN CODE SỬA LẠI ---
+        // Xử lý ẩn Context Menu khi click ra ngoài
         if (Input.GetMouseButtonDown(0) && contextMenu != null && contextMenu.activeSelf)
         {
-            // Kiểm tra: Con chuột có đang đè lên cái nút UI nào không?
-            // Nếu KHÔNG đè lên UI (tức là click ra ngoài khoảng trống) thì mới tắt menu
             if (!EventSystem.current.IsPointerOverGameObject())
             {
                 contextMenu.SetActive(false);
@@ -48,171 +40,95 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    // --------------------------------------------------
-    // 🔔 PHẦN XỬ LÝ CONTEXT MENU (CLICK CHUỘT PHẢI)
-    // --------------------------------------------------
-    public void OpenContextMenu(InventoryItem item)
-    {
-        if (contextMenu == null) return;
-
-        selectedItem = item;
-        contextMenu.SetActive(true);
-
-        // --- ĐOẠN CODE SỬA LẠI ---
-
-        // Cách A: Nếu dùng Canvas Overlay (Code cũ)
-        // contextMenu.transform.position = Input.mousePosition;
-
-        // Cách B: Chuẩn nhất cho mọi loại Canvas (Overlay hay Camera đều chạy)
-        // Lấy RectTransform của cha nó (thường là InventoryPanel hoặc Canvas)
-        RectTransform parentRect = contextMenu.transform.parent.GetComponent<RectTransform>();
-
-        Vector2 localPoint;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            parentRect,
-            Input.mousePosition,
-            null, // Nếu dùng Camera thì thay null bằng Camera.main, nhưng thường null là tự hiểu
-            out localPoint
-        );
-
-        contextMenu.transform.localPosition = localPoint;
-        // -------------------------
-
-        // Đưa lên trên cùng để không bị che
-        contextMenu.transform.SetAsLastSibling();
-    }
-
-    // Gán hàm này vào nút "Use" (Dùng) trên ContextMenu
-    public void OnUseButton()
-    {
-        Debug.Log("==> Đã bấm nút USE!"); // 1. Kiểm tra xem nút có ăn không?
-
-        if (selectedItem == null)
-        {
-            Debug.LogError("LỖI: selectedItem đang bị Null! (Có thể do chưa lưu item khi click chuột phải)");
-            return;
-        }
-
-        Debug.Log("Đang xử lý vật phẩm: " + selectedItem.data.itemName + " | Số lượng cũ: " + selectedItem.stackSize);
-
-        // Trừ số lượng
-        selectedItem.stackSize--;
-
-        Debug.Log("Số lượng mới: " + selectedItem.stackSize);
-
-        // Nếu hết thì xóa
-        if (selectedItem.stackSize <= 0)
-        {
-            Debug.Log("Hết hàng -> Xóa khỏi list!");
-            inventory.Remove(selectedItem);
-        }
-
-        // Tắt menu
-        if (contextMenu != null) contextMenu.SetActive(false);
-
-        // QUAN TRỌNG: Vẽ lại UI
-        Debug.Log("Đang gọi UpdateUI()...");
-        UpdateUI();
-    }
-
-    // --------------------------------------------------
-    // XỬ LÝ KHI ẤN NÚT "VỨT" (REMOVE)
-    // --------------------------------------------------
-    public void OnRemoveButton()
-    {
-        if (selectedItem == null) return;
-
-        Debug.Log($"Đã vứt bỏ: {selectedItem.data.itemName}");
-
-        // Xóa thẳng khỏi list luôn, không cần trừ số lượng
-        inventory.Remove(selectedItem);
-
-        // Vẽ lại túi ngay lập tức
-        UpdateUI();
-
-        if (contextMenu != null) contextMenu.SetActive(false);
-        selectedItem = null;
-    }
-
-    // --------------------------------------------------
-    // CÁC HÀM CŨ (ADD ITEM, TOGGLE...)
-    // --------------------------------------------------
     public void ToggleInventory()
     {
         isInventoryOpen = !isInventoryOpen;
         inventoryUI.SetActive(isInventoryOpen);
 
         if (!isInventoryOpen && contextMenu != null)
-            contextMenu.SetActive(false); // Đóng túi thì tắt luôn menu
+            contextMenu.SetActive(false);
 
-        if (isInventoryOpen)
-        {
-            UpdateUI();
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
-        else
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
+        if (isInventoryOpen) UpdateUI();
+
+        // 🔥 BÁO CÁO TRẠNG THÁI CHO GAME MANAGER
+        if (GameCursorManager.Instance != null)
+            GameCursorManager.Instance.isInventoryOpen = isInventoryOpen;
     }
 
+    // --- HÀM DÙNG ITEM (USE) ---
+    public void OnUseButton()
+    {
+        if (selectedItem == null) return;
+
+        // Kiểm tra loại item
+        if (selectedItem.data.itemType == ItemType.Consumable)
+        {
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+            {
+                CharacterBaseStats stats = player.GetComponent<CharacterBaseStats>();
+                if (stats != null)
+                {
+                    stats.Heal(selectedItem.data.effectAmount);
+                }
+            }
+        }
+
+        // Trừ số lượng
+        selectedItem.stackSize--;
+        if (selectedItem.stackSize <= 0) inventory.Remove(selectedItem);
+
+        if (contextMenu != null) contextMenu.SetActive(false);
+        UpdateUI();
+    }
+
+    // --- CÁC HÀM CƠ BẢN KHÁC ---
     public void AddItem(ItemData newItem)
     {
         if (newItem.isStackable)
         {
             foreach (InventoryItem item in inventory)
             {
-                if (item.data == newItem)
-                {
-                    item.AddToStack();
-                    if (isInventoryOpen) UpdateUI();
-                    return;
-                }
+                if (item.data == newItem) { item.AddToStack(); if (isInventoryOpen) UpdateUI(); return; }
             }
         }
-        InventoryItem newSlot = new InventoryItem(newItem);
-        inventory.Add(newSlot);
+        inventory.Add(new InventoryItem(newItem));
         if (isInventoryOpen) UpdateUI();
+    }
+
+    public void OpenContextMenu(InventoryItem item)
+    {
+        if (contextMenu == null) return;
+        selectedItem = item;
+        contextMenu.SetActive(true);
+        contextMenu.transform.position = Input.mousePosition; // Đơn giản hóa vị trí
+        contextMenu.transform.SetAsLastSibling();
+    }
+
+    public void OnRemoveButton()
+    {
+        if (selectedItem == null) return;
+        inventory.Remove(selectedItem);
+        UpdateUI();
+        if (contextMenu != null) contextMenu.SetActive(false);
     }
 
     void UpdateUI()
     {
-        foreach (Transform child in slotContainer)
-        {
-            Destroy(child.gameObject); // Xóa sạch ô cũ trước khi vẽ ô mới
-        }
-
+        foreach (Transform child in slotContainer) Destroy(child.gameObject);
         foreach (InventoryItem item in inventory)
         {
-            GameObject newSlotObj = Instantiate(slotPrefab, slotContainer);
-            InventorySlot slotScript = newSlotObj.GetComponent<InventorySlot>();
-
-            if (slotScript != null)
-            {
-                // Gọi hàm SetItem mới (truyền InventoryItem)
-                slotScript.SetItem(item);
-            }
+            GameObject newSlot = Instantiate(slotPrefab, slotContainer);
+            newSlot.GetComponent<InventorySlot>()?.SetItem(item);
         }
     }
 }
 
-// Class này nằm cùng file InventoryManager nhưng ở ngoài class chính
 [System.Serializable]
 public class InventoryItem
 {
     public ItemData data;
     public int stackSize;
-
-    public InventoryItem(ItemData _data)
-    {
-        data = _data;
-        stackSize = 1;
-    }
-
-    public void AddToStack()
-    {
-        stackSize++;
-    }
+    public InventoryItem(ItemData _data) { data = _data; stackSize = 1; }
+    public void AddToStack() { stackSize++; }
 }

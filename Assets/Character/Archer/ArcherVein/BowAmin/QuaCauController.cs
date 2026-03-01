@@ -9,6 +9,10 @@ public class QuaCauController : MonoBehaviour
     public float arrowForce = 20f;         
     public float arrowDelay = 0.5f;
 
+    [Header("Cooldown Settings")] // [MỚI] Cài đặt hồi chiêu
+    public float attackCooldown = 1.0f; // Thời gian hồi chiêu (1 giây)
+    private float lastAttackTime = -Mathf.Infinity; // Thời điểm bắn lần cuối (âm vô cùng để bắn được ngay lần đầu)
+
     private bool isPlaying = false;
     private float animationLength = 0f;
 
@@ -19,13 +23,17 @@ public class QuaCauController : MonoBehaviour
 
     void Update()
     {
-        // Logic bắn thường (Chuột trái) - Giữ nguyên, chỉ thêm điều kiện check E
-        // Nếu đang giữ E thì BowController này không tự xử lý chuột trái nữa (để Skill E xử lý)
+        // Nếu đang giữ E thì BowController này không tự xử lý chuột trái nữa
         if (Input.GetKey(KeyCode.E)) return; 
 
-        if (Input.GetMouseButtonDown(0) && !isPlaying)
+        // [MỚI] Thêm điều kiện check thời gian hồi chiêu
+        // Time.time >= lastAttackTime + attackCooldown: Nghĩa là thời gian hiện tại đã vượt qua thời điểm được phép bắn tiếp theo chưa
+        if (Input.GetMouseButtonDown(0) && !isPlaying && Time.time >= lastAttackTime + attackCooldown)
         {
-            ShowQuaCauAndPlayAnim(); // Gọi hàm public
+            // [MỚI] Cập nhật thời điểm bắn mới nhất
+            lastAttackTime = Time.time;
+
+            ShowQuaCauAndPlayAnim(); 
             
             // Bắn thường
             Invoke(nameof(ShootArrowBasic), arrowDelay);
@@ -43,7 +51,7 @@ public class QuaCauController : MonoBehaviour
 
     public void HideQuaCau()
     {
-        if (!quacauObject.activeSelf) return; // Nếu tắt rồi thì thôi
+        if (!quacauObject.activeSelf) return; 
 
         if (disappearEffect != null)
         {

@@ -84,6 +84,29 @@ public class vThirdPersonCamera : MonoBehaviour
         currentHeight = height;
     }
 
+    void Update()
+    {
+        // 🔥 [SỬA LỖI] KIỂM TRA AN TOÀN
+        // Nếu GameCursorManager chưa xuất hiện hoặc bị lỗi -> Thì cứ cho quay camera bình thường (hoặc return tùy bạn)
+        if (GameCursorManager.Instance == null)
+        {
+            // Debug.LogWarning("Chưa tìm thấy GameCursorManager!");
+            return;
+        }
+
+        // 🔥 LOGIC CHẶN CAMERA (Giờ mới check các biến)
+        if (GameCursorManager.Instance.isInventoryOpen ||
+            GameCursorManager.Instance.isStoryUIOpen ||
+            GameCursorManager.Instance.isPauseMenuOpen)
+        {
+            return; // UI đang mở -> Dừng quay camera
+        }
+
+        // ... Code quay camera của bạn ở dưới này ...
+        // float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+        // ...
+    }
+
     void FixedUpdate()
     {
         if (target == null || targetLookAt == null) return;
