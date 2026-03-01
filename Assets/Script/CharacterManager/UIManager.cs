@@ -5,30 +5,60 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager instance;
 
-    [Header("Thanh Chỉ Số")]
-    public Slider healthSlider; // Kéo Slider Máu vào
-    public Slider rageSlider;   // Kéo Slider Nộ vào
+    [Header("HP Bars")]
+    public Slider healthFront;     // thanh máu chính (tụt nhanh)
+    public Slider healthBack;      // thanh máu trễ (tụt chậm)
+
+    [Header("Rage")]
+    public Slider rageSlider;
 
     [Header("Skill UI")]
-    public Image skillE_Icon;   // Kéo Image (Filled) của Skill E
-    public Image skillQ_Icon;   // Kéo Image (Filled) của Skill Q
+    public Image skillE_Icon;
+    public Image skillQ_Icon;
+
+    [Header("Smooth Settings")]
+    public float frontSpeed = 12f;   // tốc độ thanh chính
+    public float backSpeed = 2f;     // tốc độ thanh trễ
+
+    private float targetHealth;
 
     void Awake()
     {
         instance = this;
     }
 
-    // Cập nhật thanh máu
-    public void UpdateHealth(float current, float max)
+    void Update()
     {
-        if (healthSlider != null)
+        if (healthFront != null)
         {
-            healthSlider.maxValue = max;
-            healthSlider.value = current;
+            healthFront.value = Mathf.Lerp(
+                healthFront.value,
+                targetHealth,
+                Time.deltaTime * frontSpeed
+            );
+        }
+
+        if (healthBack != null)
+        {
+            healthBack.value = Mathf.Lerp(
+                healthBack.value,
+                targetHealth,
+                Time.deltaTime * backSpeed
+            );
         }
     }
 
-    // Cập nhật thanh nộ
+    public void UpdateHealth(float current, float max)
+    {
+        targetHealth = current;
+
+        if (healthFront != null)
+            healthFront.maxValue = max;
+
+        if (healthBack != null)
+            healthBack.maxValue = max;
+    }
+
     public void UpdateRage(float current, float max)
     {
         if (rageSlider != null)
@@ -38,7 +68,6 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    // Cập nhật vòng hồi chiêu (0 là chưa hồi, 1 là đã hồi)
     public void UpdateCooldownE(float fillAmount)
     {
         if (skillE_Icon != null) skillE_Icon.fillAmount = fillAmount;
