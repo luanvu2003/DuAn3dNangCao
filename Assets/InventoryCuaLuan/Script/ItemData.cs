@@ -1,16 +1,20 @@
 using UnityEngine;
 
-// Dòng này giúp bạn chuột phải tạo file được trong Unity
+public enum ItemType 
+{ 
+    Resource,   // Nguyên liệu
+    Consumable, // Đồ tiêu thụ (Máu, Mana...)
+    Equipment   // Trang bị
+}
+
 [CreateAssetMenu(fileName = "New Item", menuName = "Inventory/Item")]
 public class ItemData : ScriptableObject
 {
-    [Header("Thông tin cơ bản")]
-    public string itemName = "Tên Vật Phẩm";
-    public Sprite icon; // Hình ảnh hiển thị trong túi
-    
-    [TextArea]
-    public string description = "Mô tả công dụng của vật phẩm...";
+    public string itemName;
+    public Sprite icon;
+    public bool isStackable;
 
-    [Header("Loại vật phẩm")]
-    public bool isStackable = true; // Có xếp chồng được không? (Ví dụ: Máu thì true, Kiếm thì false)
+    [Header("Item Effect")]
+    public ItemType itemType; // Chọn loại item là Consumable
+    public int effectAmount;  // Hồi bao nhiêu? (Ví dụ: 50)
 }

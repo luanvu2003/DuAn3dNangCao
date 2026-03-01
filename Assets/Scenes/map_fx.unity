@@ -646,6 +646,53 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5d93ce841c8c75344804b594d45117b0, type: 3}
   m_PrefabInstance: {fileID: 2122225359}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &316078418
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 316078420}
+  - component: {fileID: 316078419}
+  m_Layer: 0
+  m_Name: GameCursorManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &316078419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 316078418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f566768fd4558384b84f1ee20bf2ebe3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isInventoryOpen: 0
+  isStoryUIOpen: 0
+  isPauseMenuOpen: 0
+--- !u!4 &316078420
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 316078418}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1124.1396, y: 642.25476, z: 54.480736}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &364652967
 GameObject:
   m_ObjectHideFlags: 0
@@ -934,6 +981,7 @@ MonoBehaviour:
   shootPoint: {fileID: 201332120}
   arrowForce: 20
   arrowDelay: 0.5
+  attackCooldown: 1
 --- !u!1 &440086704 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: cc71d7f1422f39746b75b0657ebe8a2a, type: 3}
@@ -3125,6 +3173,14 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: ToggleInventory
       objectReference: {fileID: 0}
+    - target: {fileID: 4263549429126842091, guid: 670fde5daf359a44889ccfb6d089c502, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1681497144}
+    - target: {fileID: 4263549429126842091, guid: 670fde5daf359a44889ccfb6d089c502, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnUseButton
+      objectReference: {fileID: 0}
     - target: {fileID: 7642181490086927466, guid: 670fde5daf359a44889ccfb6d089c502, type: 3}
       propertyPath: m_Name
       value: InventoryPanel
@@ -3132,6 +3188,14 @@ PrefabInstance:
     - target: {fileID: 7642181490086927466, guid: 670fde5daf359a44889ccfb6d089c502, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8319443071259866624, guid: 670fde5daf359a44889ccfb6d089c502, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1681497144}
+    - target: {fileID: 8319443071259866624, guid: 670fde5daf359a44889ccfb6d089c502, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnRemoveButton
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3451,6 +3515,7 @@ MonoBehaviour:
   questPanel: {fileID: 723784886}
   questTitleText: {fileID: 606390735}
   questProgressText: {fileID: 1742326584}
+  acceptButton: {fileID: 0}
 --- !u!1 &1657420300
 GameObject:
   m_ObjectHideFlags: 0
@@ -5539,3 +5604,4 @@ SceneRoots:
   - {fileID: 973052510}
   - {fileID: 1681497143}
   - {fileID: 97544020}
+  - {fileID: 316078420}

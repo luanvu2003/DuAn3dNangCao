@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1270030867, guid: 9682bd6c9bf8a0e4e834932677c313eb, type: 3}
+  m_Sprite: {fileID: -490030391, guid: c50cd518aa976fd4aab5b907dfea0a2f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -133,7 +133,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4217080191458548500}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b71e675d68c505241a673a20c6a6d65d, type: 3}
+  m_Script: {fileID: 11500000, guid: d42f9a815e6fed14bb05f0a60c6ca119, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   iconImage: {fileID: 138338924396034415}
@@ -159,7 +159,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 1469723722, guid: a16aa4669cd69214a8893b72f0202d05, type: 3}
+  m_Sprite: {fileID: 1564756083, guid: 533de7a9bd459e445998a89d1f3aa64d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -272,6 +272,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -408,6 +409,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0

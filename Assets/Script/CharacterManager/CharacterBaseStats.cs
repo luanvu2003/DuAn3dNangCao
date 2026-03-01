@@ -123,4 +123,21 @@ public class CharacterBaseStats : MonoBehaviour
         Debug.Log(transform.name + " Đã hy sinh!");
         // gameObject.SetActive(false); // Tạm thời tắt đi
     }
+
+    public virtual void Heal(float amount)
+    {
+        // 1. Cộng máu
+        currentHP += amount;
+
+        // 2. Không cho vượt quá máu tối đa
+        if (currentHP > maxHP) currentHP = maxHP;
+
+        // 3. Cập nhật UI ngay lập tức
+        if (UIManager.instance != null)
+        {
+            UIManager.instance.UpdateHealth(currentHP, maxHP);
+        }
+
+        Debug.Log(transform.name + " đã hồi phục: " + amount + " máu. HP hiện tại: " + currentHP);
+    }
 }

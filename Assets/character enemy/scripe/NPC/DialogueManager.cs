@@ -36,14 +36,19 @@ public class DialogueManager : MonoBehaviour
         if (!canTalk || isTalking) return;
 
         currentNPC = npc;
-
         isTalking = true;
         canTalk = false;
 
         if (dialogueCanvas != null)
             dialogueCanvas.SetActive(true);
 
-        Time.timeScale = 0f;
+        // 🔥 [QUAN TRỌNG] BÁO HIỆN CHUỘT
+        if (GameCursorManager.Instance != null)
+        {
+            GameCursorManager.Instance.isStoryUIOpen = true;
+        }
+
+        Time.timeScale = 0f; // Dừng thời gian game
 
         currentNode = DialogueDatabase.GetStartNode();
         ShowNode(currentNode);
@@ -53,28 +58,34 @@ public class DialogueManager : MonoBehaviour
     {
         npcText.text = node.text;
 
-        // 🔥 Nếu là câu nhận nhiệm vụ thì bật quest
+        // Logic nhận nhiệm vụ (Giữ nguyên của bạn)
         if (node.text.Contains("tiêu diệt đủ 5"))
         {
-            QuestManager.Instance.StartDestroyPillarQuest();
-            FindObjectOfType<WorldSpawner>().StartSpawning();
+            if (QuestManager.Instance != null)
+                QuestManager.Instance.StartDestroyPillarQuest();
+            
+            var spawner = FindObjectOfType<WorldSpawner>();
+            if (spawner != null) spawner.StartSpawning();
         }
 
+        // Xóa nút cũ
         foreach (Transform child in choicesParent)
             Destroy(child.gameObject);
 
+        // Nếu hết lựa chọn -> Kết thúc thoại
         if (node.choices == null || node.choices.Count == 0)
         {
             StartCoroutine(EndDialogue());
             return;
         }
 
+        // Tạo nút lựa chọn mới
         foreach (DialogueChoice choice in node.choices)
         {
             GameObject btn = Instantiate(choiceButtonPrefab, choicesParent);
-
             btn.GetComponentInChildren<TMP_Text>().text = choice.choiceText;
 
+            // Xử lý click nút (Chuột đã hiện nên sẽ click được)
             btn.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
             {
                 ShowNode(choice.nextNode);
@@ -84,16 +95,22 @@ public class DialogueManager : MonoBehaviour
 
     IEnumerator EndDialogue()
     {
+        // Đợi 1s (dùng Realtime vì TimeScale đang bằng 0)
         yield return new WaitForSecondsRealtime(1f);
 
         if (dialogueCanvas != null)
             dialogueCanvas.SetActive(false);
 
-        Time.timeScale = 1f;
-
+        Time.timeScale = 1f; // Chạy lại thời gian
         isTalking = false;
 
-        // 🔥 Nếu player vẫn trong vùng → hiện lại F
+        // 🔥 [QUAN TRỌNG] BÁO ẨN CHUỘT (Vì đã nói chuyện xong)
+        if (GameCursorManager.Instance != null)
+        {
+            GameCursorManager.Instance.isStoryUIOpen = false;
+        }
+
+        // Nếu player vẫn trong vùng → hiện lại chữ F
         if (currentNPC != null && currentNPC.PlayerInRange())
         {
             currentNPC.ShowPressF();

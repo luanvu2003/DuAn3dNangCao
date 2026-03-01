@@ -2892,6 +2892,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   healthSlider: {fileID: 9044250415972439490}
+  itemToDrop: {fileID: 7215856734752065869, guid: 586173b202a1b7f49ad783071e8d5fd1, type: 3}
+  minDropAmount: 1
+  maxDropAmount: 5
+  dropChance: 100
+  scatterForce: 3
 --- !u!114 &1137848249990951581
 MonoBehaviour:
   m_ObjectHideFlags: 0

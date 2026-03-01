@@ -1,5 +1,8 @@
 using UnityEngine;
+// Thêm namespace này để gọi được script kia
+using Benjathemaker; 
 
+[RequireComponent(typeof(Rigidbody))]
 public class ItemPickup : MonoBehaviour
 {
     [Header("Settings")]
@@ -7,15 +10,33 @@ public class ItemPickup : MonoBehaviour
     public GameObject pickupEffect;
 
     [Header("Magnet Settings")]
-    public float detectRange = 5f;       // Khoảng cách bắt đầu hút
-    public float moveSpeed = 10f;       // Tốc độ bay vào người
-    public float collectDistance = 0.5f; // Khoảng cách cực gần để biến mất (nhặt)
+    public float detectRange = 5f;       
+    public float moveSpeed = 15f;        
+    public float collectDistance = 0.8f; 
 
     [Header("Inventory Data")]
     public ItemData itemData;
 
     private Transform playerTransform;
     private bool isBeingPulled = false;
+    private Rigidbody rb;
+    private Collider col;
+    
+    // Biến để chứa script animation
+    private SimpleGemsAnim animScript;
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+        col = GetComponent<Collider>();
+        
+        // 1. Tìm script SimpleGemsAnim đang gắn trên vật phẩm
+        animScript = GetComponent<SimpleGemsAnim>();
+
+        // Cài đặt vật lý ban đầu để rớt xuống đất đẹp
+        rb.useGravity = true; 
+        rb.isKinematic = false; 
+    }
 
     void Update()
     {
@@ -25,19 +46,32 @@ public class ItemPickup : MonoBehaviour
         {
             float distance = Vector3.Distance(transform.position, playerTransform.position);
 
-            // 1. Kiểm tra nếu player ở trong vùng hút
+            // 2. Nếu lọt vào tầm hút
             if (distance <= detectRange)
             {
                 isBeingPulled = true;
             }
 
-            // 2. Thực hiện việc di chuyển (hút) vật phẩm
             if (isBeingPulled)
             {
-                // Bay về phía player
-                transform.position = Vector3.MoveTowards(transform.position, playerTransform.position, moveSpeed * Time.deltaTime);
+                // 🔥 QUAN TRỌNG NHẤT: Tắt script Animation đi
+                // Để nó không ép vật phẩm đứng yên một chỗ nữa
+                if (animScript != null && animScript.enabled)
+                {
+                    animScript.enabled = false;
+                }
 
-                // 3. Khi chạm sát người thì nhặt
+                // 🔥 Tắt vật lý để bay cho mượt
+                rb.useGravity = false;
+                rb.isKinematic = true; 
+                if(col != null) col.isTrigger = true; 
+
+                // Bay về phía player
+                // Cộng thêm Vector3.up * 1.0f để bay vào ngực/bụng thay vì bay vào chân
+                Vector3 targetPos = playerTransform.position + Vector3.up * 1.0f;
+                transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
+
+                // Nhặt khi đủ gần
                 if (distance <= collectDistance)
                 {
                     CollectItem(playerTransform.gameObject);
@@ -52,26 +86,15 @@ public class ItemPickup : MonoBehaviour
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
             if (player == null) player = GameObject.FindGameObjectWithTag("Player1");
-            
             if (player != null) playerTransform = player.transform;
         }
     }
 
     void CollectItem(GameObject player)
     {
-        // Kiểm tra PlayerStats (đã thêm check null an toàn để không bị lỗi đỏ)
-        // Nếu bạn không có script PlayerStats, dòng này sẽ bị bỏ qua thay vì làm crash game
-        var playerStats = player.GetComponent<MonoBehaviour>(); // Thay đổi tạm thời hoặc tạo script PlayerStats
-        
-        /* LƯU Ý: Nếu bạn đã xóa PlayerStats, hãy comment đoạn này lại 
-           hoặc tạo 1 file PlayerStats.cs mới.
-        */
-        // player.GetComponent<PlayerStats>()?.AddScore(scoreValue);
-
         if (itemData != null && InventoryManager.Instance != null)
         {
             InventoryManager.Instance.AddItem(itemData);
-            Debug.Log("Đã nhặt tự động: " + itemData.itemName);
         }
 
         if (pickupEffect != null)

@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: "B\xECnh M\xE1u"
   icon: {fileID: -490030391, guid: c50cd518aa976fd4aab5b907dfea0a2f, type: 3}
-  description: "S\u1EED d\u1EE5ng \u0111\u1EC3 h\u1ED3i m\xE1u"
   isStackable: 1
+  itemType: 1
+  effectAmount: 20
