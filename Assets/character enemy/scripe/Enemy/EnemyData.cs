@@ -33,13 +33,10 @@ public class EnemyData : MonoBehaviour
             // 4. Nếu Player này gần hơn người cũ (hoặc là người đầu tiên tìm thấy)
             if (distToPlayer < closestDistance)
             {
-                // Cập nhật kỷ lục mới
                 closestDistance = distToPlayer;
                 bestTarget = p.transform;
             }
         }
-
-        // Trả về người gần nhất (Nếu không tìm thấy ai thì trả về null)
         return bestTarget;
     }
 }

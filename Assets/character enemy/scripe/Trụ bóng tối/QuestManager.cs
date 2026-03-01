@@ -3,6 +3,10 @@ using TMPro;
 
 public class QuestManager : MonoBehaviour
 {
+
+    [Header("World References")]
+    public GameObject pillarsParent;   // Object chứa toàn bộ trụ
+    public WorldSpawner worldSpawner;  // Spawner ngoài map
     public static QuestManager Instance;
 
     [Header("UI References")]
@@ -39,16 +43,23 @@ public class QuestManager : MonoBehaviour
     }
 
     // --- GÁN HÀM NÀY VÀO NÚT "CHẤP NHẬN" ---
-    public void OnClickAcceptQuest()
-    {
-        if (acceptButton != null) acceptButton.SetActive(false);
+public void OnClickAcceptQuest()
+{
+    if (acceptButton != null) acceptButton.SetActive(false);
         
-        StartDestroyPillarQuest();
+    StartDestroyPillarQuest();
 
-        // 🔥 TẮT CỜ -> ẨN CHUỘT
-        if (GameCursorManager.Instance != null)
-            GameCursorManager.Instance.isStoryUIOpen = false;
-    }
+    // 🔥 Bật trụ
+    if (pillarsParent != null)
+        pillarsParent.SetActive(true);
+
+    // 🔥 Bật spawn quái
+    if (worldSpawner != null)
+        worldSpawner.StartSpawning();
+
+    if (GameCursorManager.Instance != null)
+        GameCursorManager.Instance.isStoryUIOpen = false;
+}
 
     public void StartDestroyPillarQuest()
     {
