@@ -1,30 +1,19 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class WalkState : StateMachineBehaviour
 {
-    private List<Transform> waypoints = new List<Transform>();
     private NavMeshAgent agent;
     private Transform player;
 
+    private Vector3 startPosition;
+    private float patrolRadius = 200f;
     private float time;
-    private int lastIndex = -1;
     private float chaseRange = 8f;
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        time = 0f;
-
-        // 🔥 LUÔN CLEAR – bắt buộc với StateMachineBehaviour
-        waypoints.Clear();
-
-        // Player
-        GameObject p = GameObject.FindGameObjectWithTag("Player");
-        if (p != null)
-            player = p.transform;
-
-        // NavMeshAgent
+        // Lấy NavMeshAgent
         agent = animator.GetComponentInParent<NavMeshAgent>();
         if (agent == null)
         {
@@ -32,53 +21,45 @@ public class WalkState : StateMachineBehaviour
             return;
         }
 
-        // WayPoint holder
-        GameObject holder = GameObject.FindGameObjectWithTag("WayPoint");
-        if (holder == null)
+        if (!agent.isOnNavMesh)
         {
-            Debug.LogError("❌ Không tìm thấy GameObject có tag 'WayPoint'");
+            Debug.LogError("❌ Agent không nằm trên NavMesh!");
             return;
         }
 
-        // Load waypoint con
-        foreach (Transform t in holder.transform)
-        {
-            waypoints.Add(t);
-        }
+        // Lưu vị trí spawn ban đầu
+        startPosition = agent.transform.position;
 
-        Debug.Log("✅ Waypoint loaded: " + waypoints.Count);
+        // Tìm Player
+        GameObject p = GameObject.FindGameObjectWithTag("Player");
+        if (p != null)
+            player = p.transform;
 
-        if (waypoints.Count == 0)
-        {
-            Debug.LogError("❌ WayPoint KHÔNG có waypoint con!");
-            return;
-        }
+        time = 0f;
 
-        // Set điểm đầu tiên
+        // Chọn điểm patrol đầu tiên
         SetRandomDestination();
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (agent == null || waypoints.Count == 0) return;
+        if (agent == null || !agent.isOnNavMesh) return;
 
         time += Time.deltaTime;
+
         if (time > 10f)
             animator.SetBool("isPatrolling", false);
 
-        // Tới waypoint → chọn cái mới
+        // Nếu đã tới điểm → chọn điểm mới
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
             SetRandomDestination();
         }
 
-        // Chase player
+        // Kiểm tra khoảng cách tới player để chuyển sang chạy
         if (player != null)
         {
-            float distance = Vector3.Distance(
-                animator.transform.position,
-                player.position
-            );
+            float distance = Vector3.Distance(agent.transform.position, player.position);
 
             if (distance <= chaseRange)
             {
@@ -95,17 +76,13 @@ public class WalkState : StateMachineBehaviour
 
     private void SetRandomDestination()
     {
-        if (waypoints.Count == 0 || agent == null || !agent.isOnNavMesh)
-            return;
+        Vector3 randomDirection = Random.insideUnitSphere * patrolRadius;
+        randomDirection += startPosition;
 
-        int index;
-        do
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(randomDirection, out hit, patrolRadius, NavMesh.AllAreas))
         {
-            index = Random.Range(0, waypoints.Count);
+            agent.SetDestination(hit.position);
         }
-        while (index == lastIndex && waypoints.Count > 1);
-
-        lastIndex = index;
-        agent.SetDestination(waypoints[index].position);
     }
 }

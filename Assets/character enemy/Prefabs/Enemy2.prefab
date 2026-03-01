@@ -995,7 +995,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 2.3
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -1046,9 +1046,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f5a84274f5b6bd428bf1680434396f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waypointHolder: {fileID: 0}
   chaseRange: 8
   attackRange: 1.5
+  patrolRadius: 10
 --- !u!114 &4520710335441823839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1063,6 +1063,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   healthSlider: {fileID: 2007503251753525755}
+  itemToDrop: {fileID: 0}
+  minDropAmount: 1
+  maxDropAmount: 5
+  dropChance: 100
+  scatterForce: 3
 --- !u!114 &8614107920993500800
 MonoBehaviour:
   m_ObjectHideFlags: 0
