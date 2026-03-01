@@ -67,5 +67,8 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "DuAn3dNangCao.slnx"
+    "dotnet.defaultSolution": "DuAn3dNangCao.slnx",
+    "cSpell.words": [
+        "Behaviour"
+    ]
 }
