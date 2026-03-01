@@ -6,13 +6,14 @@ public class CharacterBaseStats : MonoBehaviour
     [Header("CHỈ SỐ CƠ BẢN")]
     public float maxHP = 100f;
     public float currentHP;
-    
+
     public float maxRage = 100f;
     public float currentRage;
+    public bool isDead = false;
 
     // Dictionary lưu thời gian hồi skill: Key="TênSkill", Value="Thời điểm hồi xong"
     protected Dictionary<string, float> skillCooldowns = new Dictionary<string, float>();
-    
+
     // Dictionary lưu tổng thời gian cooldown (để tính % hiển thị vòng tròn)
     protected Dictionary<string, float> skillDurations = new Dictionary<string, float>();
 
@@ -50,9 +51,9 @@ public class CharacterBaseStats : MonoBehaviour
         {
             float timeDone = skillCooldowns[skillName];
             float duration = skillDurations.ContainsKey(skillName) ? skillDurations[skillName] : 1f;
-            
+
             float remaining = timeDone - Time.time;
-            
+
             // Nếu còn thời gian hồi -> Tính % ngược lại
             if (remaining > 0)
             {
@@ -104,7 +105,7 @@ public class CharacterBaseStats : MonoBehaviour
             UIManager.instance.UpdateHealth(currentHP, maxHP);
 
         Debug.Log(transform.name + " bị đánh! Máu còn: " + currentHP);
-        
+
         if (currentHP <= 0) Die();
     }
 
@@ -120,8 +121,17 @@ public class CharacterBaseStats : MonoBehaviour
 
     protected virtual void Die()
     {
+        if (isDead) return;
+
+        isDead = true;
+        currentHP = 0;
         Debug.Log(transform.name + " Đã hy sinh!");
-        // gameObject.SetActive(false); // Tạm thời tắt đi
+
+        // 🔥 GỌI VỀ CHARACTER MANAGER (Thay vì PartyManager cũ)
+        if (CharacterManager.Instance != null)
+        {
+            CharacterManager.Instance.OnCharacterDied(this);
+        }
     }
 
     public virtual void Heal(float amount)

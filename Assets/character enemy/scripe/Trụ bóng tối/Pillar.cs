@@ -58,11 +58,19 @@ public class Pillar : MonoBehaviour
 
     void DestroyPillar()
     {
-        // Kiểm tra null để tránh lỗi nếu chưa có QuestManager
+        // Code cũ của bạn (Giữ nguyên)
         if (QuestManager.Instance != null)
         {
             QuestManager.Instance.AddProgress(1);
         }
+
+        // --- THÊM ĐOẠN NÀY ---
+        // Báo cho GameWinManager biết là trụ đã nổ
+        if (GameWinManager.Instance != null)
+        {
+            GameWinManager.Instance.OnPillarDestroyed();
+        }
+        // ---------------------
         
         Destroy(gameObject);
     }

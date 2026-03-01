@@ -21,6 +21,7 @@ public class SkillSequencer : MonoBehaviour
     {
         // --- GIAI ĐOẠN 1: XOAY ---
         phase1Hitbox.SetActive(true);
+        AudioManager.Instance.PlaySFX("PS_EX");
         phase2Hitbox.SetActive(false);
         
         // Chờ cho xoay xong (ví dụ 1.5 giây)
@@ -28,6 +29,7 @@ public class SkillSequencer : MonoBehaviour
 
         // --- GIAI ĐOẠN 2: NỔ BOMB ---
         phase1Hitbox.SetActive(false); // Tắt hitbox xoay đi (để không gây dame nữa)
+        AudioManager.Instance.PlaySFX("PS_EX");
         phase2Hitbox.SetActive(true);  // Bật hitbox nổ lên -> Gây dame lần 2
 
         // Chờ cho nổ xong hiệu ứng

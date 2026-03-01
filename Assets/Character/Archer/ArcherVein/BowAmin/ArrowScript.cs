@@ -20,6 +20,7 @@ public class ArrowScript : MonoBehaviour
         if (enemy != null)
         {
             enemy.TakeDamage(damage);
+            AudioManager.Instance.PlaySFX("CT_HIT"); // Phát âm thanh trúng
             SpawnEffect();
 
             // Logic Xuyên thấu:
@@ -35,12 +36,14 @@ public class ArrowScript : MonoBehaviour
         if (pillar != null)
         {
             pillar.TakeDamage(damage);
+            AudioManager.Instance.PlaySFX("CT_HIT"); // Phát âm thanh trúng
             SpawnEffect(); // Nổ hiệu ứng nếu có
             Destroy(gameObject); // Hủy mũi tên
             return; // Kết thúc luôn để không chạy code dưới
         }
         // TRƯỜNG HỢP 2: Trúng Tường/Đất (Không phải Enemy)
         // Hoặc trúng Enemy nhưng không có xuyên thấu -> Hủy
+        AudioManager.Instance.PlaySFX("CT_HIT"); // Phát âm thanh trúng
         SpawnEffect();
         Destroy(gameObject);
     }
