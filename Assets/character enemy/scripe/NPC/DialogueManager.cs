@@ -15,6 +15,8 @@ public class DialogueManager : MonoBehaviour
     private DialogueNode currentNode;
     private NPCInteraction currentNPC;
 
+    public GameObject pillarsParent;
+
     private bool isTalking = false;
     private bool canTalk = true;
 
@@ -58,6 +60,7 @@ public class DialogueManager : MonoBehaviour
         {
             QuestManager.Instance.StartDestroyPillarQuest();
             FindObjectOfType<WorldSpawner>().StartSpawning();
+            pillarsParent.SetActive(true); // 🔥 bật trụ
         }
 
         foreach (Transform child in choicesParent)

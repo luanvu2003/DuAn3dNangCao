@@ -429,7 +429,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: cc71d7f1422f39746b75b0657ebe8a2a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 11.6
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: cc71d7f1422f39746b75b0657ebe8a2a, type: 3}
       propertyPath: m_LocalPosition.y
@@ -437,7 +437,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: cc71d7f1422f39746b75b0657ebe8a2a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 28.8
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: cc71d7f1422f39746b75b0657ebe8a2a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -675,7 +675,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be06e5eda20bb984ea71f7f0ad6b3c91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 5
+  maxHealth: 100
+  duration: 0.2
+  magnitude: 0.2
 --- !u!65 &490607017
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -818,7 +820,8 @@ MonoBehaviour:
   - {fileID: 3950285017824101354, guid: f5428feef47c9b2448cbaa9d3f057942, type: 3}
   - {fileID: 8993553204828116830, guid: 2495196645547ac4996508d0bdfa16db, type: 3}
   - {fileID: 2146224155487971555, guid: 01f1a8e175ae16c43bedf94c79e0e08c, type: 3}
-  player: {fileID: 85116784}
+  players:
+  - {fileID: 85116784}
   chunkSize: 20
   enemiesPerChunk: 2
   renderDistance: 1

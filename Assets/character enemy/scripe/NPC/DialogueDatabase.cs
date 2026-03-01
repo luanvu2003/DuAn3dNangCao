@@ -7,7 +7,7 @@ public static class DialogueDatabase
         // ===== KẾT THÚC =====
 
         DialogueNode acceptEnd = new DialogueNode();
-        acceptEnd.text = "Ta tin ngươi. Hãy quay lại khi đã tiêu diệt đủ 5 con quái.";
+        acceptEnd.text = "Ta tin ngươi. Hãy quay lại khi đã tiêu diệt đủ 5 trụ bóng tôi.";
 
         DialogueNode refuseEnd = new DialogueNode();
         refuseEnd.text = "Thật đáng tiếc... Hy vọng ta sẽ tìm được người khác.";

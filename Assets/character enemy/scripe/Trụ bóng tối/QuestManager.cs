@@ -43,6 +43,13 @@ public class QuestManager : MonoBehaviour
 
         UpdateUI();
 
+        // 🔥 mỗi lần phá trụ tăng số quái spawn
+        WorldSpawner spawner = FindObjectOfType<WorldSpawner>();
+        if (spawner != null)
+        {
+            spawner.IncreaseSpawnAmount(1); // mỗi trụ +1 con mỗi chunk
+        }
+
         if (currentAmount >= targetAmount)
         {
             CompleteQuest();

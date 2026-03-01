@@ -13,16 +13,19 @@ public class WorldSpawner : MonoBehaviour
     [Header("Chunk Settings")]
     public int chunkSize = 20;
     public int enemiesPerChunk = 3;
-    public int renderDistance = 1;
+    public int renderDistance = 2; // tăng lên 2-3 cho giống Minecraft
 
     [Header("Spawn Settings")]
     public float minDistanceFromPlayer = 5f;
-    public float navMeshSearchRadius = 3f;
 
     [Header("Mob Limit")]
-    public int maxTotalEnemies = 20;
+    public int maxTotalEnemies = 50;
 
     private Dictionary<Vector2Int, List<GameObject>> activeChunks =
+        new Dictionary<Vector2Int, List<GameObject>>();
+
+    // 🔥 lưu tất cả mob đã spawn theo chunk (không bị mất)
+    private Dictionary<Vector2Int, List<GameObject>> allSpawnedChunks =
         new Dictionary<Vector2Int, List<GameObject>>();
 
     public bool canSpawn = false;
@@ -66,7 +69,14 @@ public class WorldSpawner : MonoBehaviour
 
                     if (!activeChunks.ContainsKey(chunk))
                     {
-                        SpawnChunk(chunk);
+                        if (allSpawnedChunks.ContainsKey(chunk))
+                        {
+                            ReactivateChunk(chunk);
+                        }
+                        else
+                        {
+                            SpawnChunk(chunk);
+                        }
                     }
                 }
             }
@@ -84,7 +94,7 @@ public class WorldSpawner : MonoBehaviour
 
         foreach (var chunk in chunksToRemove)
         {
-            DespawnChunk(chunk);
+            UnloadChunk(chunk);
         }
     }
 
@@ -112,6 +122,7 @@ public class WorldSpawner : MonoBehaviour
                 break;
 
             Vector3 spawnPos = GetRandomPositionInChunk(chunkCoord);
+            if (spawnPos == Vector3.zero) continue;
 
             int randomIndex = Random.Range(0, enemyPrefabs.Length);
 
@@ -122,20 +133,34 @@ public class WorldSpawner : MonoBehaviour
         }
 
         activeChunks.Add(chunkCoord, spawnedEnemies);
+        allSpawnedChunks.Add(chunkCoord, spawnedEnemies);
     }
 
-    void DespawnChunk(Vector2Int chunkCoord)
+    void UnloadChunk(Vector2Int chunkCoord)
     {
         if (activeChunks.ContainsKey(chunkCoord))
         {
             foreach (GameObject enemy in activeChunks[chunkCoord])
             {
                 if (enemy != null)
-                    Destroy(enemy);
+                    enemy.SetActive(false); // 🔥 không destroy
             }
 
             activeChunks.Remove(chunkCoord);
         }
+    }
+
+    void ReactivateChunk(Vector2Int chunkCoord)
+    {
+        List<GameObject> enemies = allSpawnedChunks[chunkCoord];
+
+        foreach (GameObject enemy in enemies)
+        {
+            if (enemy != null)
+                enemy.SetActive(true);
+        }
+
+        activeChunks.Add(chunkCoord, enemies);
     }
 
     Vector3 GetRandomPositionInChunk(Vector2Int chunkCoord)
@@ -143,35 +168,21 @@ public class WorldSpawner : MonoBehaviour
         float startX = chunkCoord.x * chunkSize;
         float startZ = chunkCoord.y * chunkSize;
 
-        NavMeshHit hit;
-
         for (int attempt = 0; attempt < 25; attempt++)
         {
             float randomX = Random.Range(startX, startX + chunkSize);
             float randomZ = Random.Range(startZ, startZ + chunkSize);
 
-            // Bắt đầu từ cao hơn player để chắc chắn nằm trên map
-            float sampleY = 200f;
+            Vector3 randomPoint = new Vector3(randomX, 100f, randomZ);
 
-            foreach (Transform p in players)
-            {
-                if (p != null && p.gameObject.activeInHierarchy)
-                {
-                    sampleY = p.position.y + 50f;
-                    break;
-                }
-            }
-
-            Vector3 randomPoint = new Vector3(randomX, sampleY, randomZ);
-
+            NavMeshHit hit;
             if (NavMesh.SamplePosition(randomPoint, out hit, 100f, NavMesh.AllAreas))
             {
                 bool tooClose = false;
 
                 foreach (Transform p in players)
                 {
-                    if (p == null || !p.gameObject.activeInHierarchy)
-                        continue;
+                    if (p == null) continue;
 
                     if (Vector3.Distance(hit.position, p.position) < minDistanceFromPlayer)
                     {
@@ -185,8 +196,7 @@ public class WorldSpawner : MonoBehaviour
             }
         }
 
-        // Nếu fail thì KHÔNG spawn
-        return new Vector3(float.MinValue, float.MinValue, float.MinValue);
+        return Vector3.zero;
     }
 
     int GetTotalEnemyCount()
@@ -195,7 +205,11 @@ public class WorldSpawner : MonoBehaviour
 
         foreach (var chunk in activeChunks.Values)
         {
-            count += chunk.Count;
+            foreach (GameObject enemy in chunk)
+            {
+                if (enemy != null && enemy.activeInHierarchy)
+                    count++;
+            }
         }
 
         return count;
@@ -207,5 +221,11 @@ public class WorldSpawner : MonoBehaviour
 
         canSpawn = true;
         UpdateChunks();
+    }
+
+    public void IncreaseSpawnAmount(int amount)
+    {
+        enemiesPerChunk += amount;
+        Debug.Log("Enemies per chunk tăng lên: " + enemiesPerChunk);
     }
 }

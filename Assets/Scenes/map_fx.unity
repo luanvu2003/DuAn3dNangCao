@@ -5338,7 +5338,7 @@ MonoBehaviour:
   enemiesPerChunk: 2
   renderDistance: 1
   minDistanceFromPlayer: 10
-  navMeshSearchRadius: 7
+  navMeshSearchRadius: 4
   maxTotalEnemies: 20
   canSpawn: 0
 --- !u!4 &2080284203
